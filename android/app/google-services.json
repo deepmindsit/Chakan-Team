@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "302214484452",
+    "project_id": "my-chakan-team",
+    "storage_bucket": "my-chakan-team.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:302214484452:android:79320e7cb04b080bb1f7f1",
+        "android_client_info": {
+          "package_name": "com.deepmindsit.mychakanteam"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOshezO0isId2IAZcMf_hVxODXS6ofZmI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
