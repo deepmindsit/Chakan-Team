@@ -9,7 +9,7 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
   final controller = getIt<DashboardController>();
-
+  final langController = getIt<TranslateController>();
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -62,6 +62,10 @@ class _DashboardPageState extends State<DashboardPage> {
       title: Image.asset(Images.logoWhite, width: 0.5.sw),
       centerTitle: true,
       actions: [
+        languageToggle(() async {
+          langController.toggleLang();
+          await controller.getDashboard(load: false);
+        }),
         GestureDetector(
           onTap: () => Get.toNamed(Routes.notificationList),
           child: Container(
@@ -80,6 +84,46 @@ class _DashboardPageState extends State<DashboardPage> {
         ),
       ],
     );
+  }
+
+  Widget languageToggle(dynamic onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.all(8.w),
+        margin: EdgeInsets.all(8.w),
+        decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+        child: Obx(
+          () => Image.asset(
+            langController.lang.value == 'en'
+                ? 'assets/images/translation_english_marathi.png'
+                : 'assets/images/translation_marathi_english.png',
+            width: 0.05.sw,
+            color: primaryColor,
+          ),
+        ),
+      ),
+    );
+
+    //   GestureDetector(
+    //   onTap: onTap,
+    //   child: Container(
+    //     margin: EdgeInsets.all(8.w),
+    //     decoration: BoxDecoration(
+    //       color: Colors.grey.withValues(alpha: 0.15),
+    //       shape: BoxShape.circle,
+    //     ),
+    //     padding: EdgeInsets.symmetric(horizontal: 8.w),
+    //     child: Obx(
+    //       () => Image.asset(
+    //         langController.lang.value == 'en'
+    //             ? 'assets/images/translation_english_marathi.png'
+    //             : 'assets/images/translation_marathi_english.png',
+    //         width: 0.06.sw,
+    //       ),
+    //     ),
+    //   ),
+    // );
   }
 
   Widget _infoGrid() {
@@ -348,7 +392,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 size: 22.sp,
               ),
               SizedBox(width: 8.w),
-              CustomText(
+              TranslatedText(
                 title: "Complaint Summary",
                 fontSize: 20.sp,
                 fontWeight: FontWeight.w700,
@@ -361,7 +405,7 @@ class _DashboardPageState extends State<DashboardPage> {
               ? SizedBox(
                 height: 120.h,
                 child: Center(
-                  child: CustomText(
+                  child: TranslatedText(
                     title: "No Data Available",
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w600,
@@ -821,7 +865,7 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
         ),
         Expanded(
-          child: CustomText(
+          child: TranslatedText(
             title: "$label ($count)",
             fontSize: 12.sp,
             textAlign: TextAlign.start,

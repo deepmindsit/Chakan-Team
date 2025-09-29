@@ -305,7 +305,7 @@ class StatusBadge extends StatelessWidget {
           width: 1,
         ),
       ),
-      child: Text(
+      child: TranslatedText(title:
         status,
         style: TextStyle(
           fontSize: 12.sp,

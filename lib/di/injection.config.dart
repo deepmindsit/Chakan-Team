@@ -14,6 +14,7 @@ import 'package:chakan_team/common/update_app.dart' as _i244;
 import 'package:chakan_team/network/api_service.dart' as _i22;
 import 'package:chakan_team/network/network_controller.dart' as _i371;
 import 'package:chakan_team/network/register_module.dart' as _i405;
+import 'package:chakan_team/utils/translate_controller.dart' as _i667;
 import 'package:chakan_team/view/complaint/controller/complaint_controller.dart'
     as _i1003;
 import 'package:chakan_team/view/dashboard/controller/dashboard_controller.dart'
@@ -51,6 +52,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i743.CameraService>(() => _i743.CameraService());
     gh.lazySingleton<_i244.UpdateController>(() => _i244.UpdateController());
     gh.lazySingleton<_i361.Dio>(() => registerModule.dio);
+    gh.lazySingleton<_i667.TranslateController>(
+      () => _i667.TranslateController(),
+    );
     gh.lazySingleton<_i1003.ComplaintController>(
       () => _i1003.ComplaintController(),
     );

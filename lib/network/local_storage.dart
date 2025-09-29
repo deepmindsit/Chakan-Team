@@ -31,6 +31,19 @@ class LocalStorage {
     return prefs.getInt(key);
   }
 
+  static Future<void> setJson(String key, dynamic value) async {
+    final prefs = await SharedPreferences.getInstance();
+    String jsonString = jsonEncode(value);
+    await prefs.setString(key, jsonString);
+  }
+
+  static Future<dynamic> getJson(String key) async {
+    final prefs = await SharedPreferences.getInstance();
+    String? jsonString = prefs.getString(key);
+    if (jsonString == null) return null;
+    return jsonDecode(jsonString);
+  }
+
   static Future<void> remove(String key) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(key);

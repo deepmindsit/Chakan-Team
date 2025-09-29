@@ -1,4 +1,5 @@
 import 'package:chakan_team/utils/exported_path.dart';
+import 'package:dotted_border/dotted_border.dart';
 
 class UpdateComplaint extends StatefulWidget {
   const UpdateComplaint({super.key});
@@ -161,29 +162,98 @@ class _UpdateComplaintState extends State<UpdateComplaint> {
     );
   }
 
+  // Widget _buildUploadDocuments() {
+  //   return GestureDetector(
+  //     onTap: () {
+  //       CustomFilePicker.showPickerBottomSheet(
+  //         onFilePicked: (file) {
+  //           controller.newAttachments.add(file);
+  //         },
+  //       );
+  //     },
+  //     child: Container(
+  //       alignment: Alignment.center,
+  //       width: double.infinity,
+  //       height: 50,
+  //       decoration: BoxDecoration(
+  //         border: Border.all(width: 0.2),
+  //         borderRadius: BorderRadius.circular(12),
+  //         color: Colors.white,
+  //       ),
+  //       child: CustomText(
+  //         title: 'Upload Documents',
+  //         fontSize: 14,
+  //         color: primaryGrey,
+  //       ),
+  //     ),
+  //   );
+  // }
   Widget _buildUploadDocuments() {
-    return GestureDetector(
-      onTap: () {
-        CustomFilePicker.showPickerBottomSheet(
-          onFilePicked: (file) {
-            controller.newAttachments.add(file);
-          },
-        );
-      },
-      child: Container(
-        alignment: Alignment.center,
-        width: double.infinity,
-        height: 50,
-        decoration: BoxDecoration(
-          border: Border.all(width: 0.2),
-          borderRadius: BorderRadius.circular(12),
-          color: Colors.white,
-        ),
-        child: CustomText(
-          title: 'Upload Documents',
-          fontSize: 14,
+    return Container(
+      decoration: BoxDecoration(
+        // border: Border.all(width: 0.2),
+        borderRadius: BorderRadius.circular(12),
+        color: Colors.white,
+      ),
+      child: GestureDetector(
+        onTap: () {
+          CustomFilePicker.showPickerBottomSheet(
+            onFilePicked: (file) {
+              controller.newAttachments.add(file);
+            },
+          );
+        },
+        child: DottedBorder(
+          dashPattern: [10, 5],
+          borderType: BorderType.RRect,
+          radius: const Radius.circular(10),
           color: primaryGrey,
+          strokeWidth: 1,
+          padding: const EdgeInsets.all(16),
+          child: Container(
+            width: Get.width,
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
+            margin: const EdgeInsets.all(16),
+            child: Obx(
+                  () =>
+              controller.isLoading.isTrue
+                  ? LoadingWidget(color: primaryColor)
+                  : Column(
+                spacing: 8.h,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Icon(HugeIcons.strokeRoundedCloudUpload),
+                  Text(
+                    'Upload Documents'.tr,
+                    style: TextStyle(
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
+
+        // Container(
+        //   alignment: Alignment.center,
+        //   width: double.infinity,
+        //   height: 50,
+        //   decoration: BoxDecoration(
+        //     border: Border.all(width: 0.2),
+        //     borderRadius: BorderRadius.circular(12),
+        //     color: Colors.white,
+        //   ),
+        //   child:
+        //
+        //   // CustomText(
+        //   //   title: 'Upload Documents',
+        //   //   fontSize: 14,
+        //   //   color: primaryGrey,
+        //   // ),
+        // ),
       ),
     );
   }

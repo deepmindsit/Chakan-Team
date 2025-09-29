@@ -63,13 +63,28 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<dynamic> getComplaint(String userId, String pageNo) async {
+  Future<dynamic> getComplaint(
+    String userId,
+    String pageNo,
+    List<String> deptIds,
+    String status,
+    String source,
+    String date,
+    String lang,
+  ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = FormData();
     _data.fields.add(MapEntry('user_id', userId));
     _data.fields.add(MapEntry('page_no', pageNo));
+    deptIds.forEach((i) {
+      _data.fields.add(MapEntry('department', i));
+    });
+    _data.fields.add(MapEntry('status', status));
+    _data.fields.add(MapEntry('type', source));
+    _data.fields.add(MapEntry('date', date));
+    _data.fields.add(MapEntry('lang', lang));
     final _options = _setStreamType<dynamic>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(

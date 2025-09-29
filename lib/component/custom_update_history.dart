@@ -10,7 +10,7 @@ class UpdateHistoryList extends StatelessWidget {
   Widget build(BuildContext context) {
     return GlassCard(
       children: [
-        if (title != null) sectionTitleWithIcon(title!),
+        // if (title != null) sectionTitleWithIcon(title!),
 
         ...updateRecords.map(
           (record) => Container(
@@ -61,7 +61,7 @@ class UpdateHistoryList extends StatelessWidget {
                         children: [
                           CustomText(
                             title: record['updated_by'] ?? 'Unknown user',
-                            fontSize: 14.sp,
+                            fontSize: 14.sp,maxLines: 2,textAlign: TextAlign.start,
                           ),
                           CustomText(
                             title:

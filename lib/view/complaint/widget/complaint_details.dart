@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:chakan_team/utils/exported_path.dart';
 
 class ComplaintDetails extends StatefulWidget {
@@ -54,7 +52,10 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
 
         if (complaints.isEmpty) {
           return Center(
-            child: CustomText(title: "No details available", fontSize: 14.sp),
+            child: TranslatedText(
+              title: "No details available",
+              fontSize: 14.sp,
+            ),
           );
         }
 
@@ -84,6 +85,7 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
                     if ((controller.complaintDetails['attachments'] as List)
                         .isNotEmpty)
                       _buildAttachmentsSection(),
+                    SizedBox(height: 16.h),
                     if ((controller.complaintDetails['comments'] as List)
                         .isNotEmpty)
                       _buildUpdatesSection(),
@@ -106,13 +108,12 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
       child: Material(
         type: MaterialType.transparency,
         child: GlassCard(
-          // borderRadius: 12.r,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
-                  child: CustomText(
+                  child: TranslatedText(
                     title:
                         controller.complaintDetails['department']?.toString() ??
                         '-',
@@ -126,9 +127,11 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
                 StatusBadge(
                   status: controller.complaintDetails['status'].toString(),
                   color:
-                  int.tryParse(
-                    controller.complaintDetails['status_color']?.toString() ?? '',
-                  ) ??
+                      int.tryParse(
+                        controller.complaintDetails['status_color']
+                                ?.toString() ??
+                            '',
+                      ) ??
                       0xFF898989,
                 ),
               ],
@@ -142,7 +145,7 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
                   color: Colors.grey,
                 ),
                 SizedBox(width: 8.w),
-                CustomText(
+                TranslatedText(
                   title:
                       "Track ID: ${controller.complaintDetails['code']?.toString() ?? 'N/A'}",
                   fontSize: 14.sp,
@@ -159,7 +162,7 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
                   color: Colors.grey,
                 ),
                 SizedBox(width: 8.w),
-                CustomText(
+                TranslatedText(
                   title:
                       "Created: ${controller.complaintDetails['created_on_date']?.toString() ?? 'N/A'}",
                   fontSize: 14.sp,
@@ -184,7 +187,7 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
               color: primaryColor,
             ),
             SizedBox(width: 8.w),
-            CustomText(
+            TranslatedText(
               title: "Description",
               fontSize: 16.sp,
               fontWeight: FontWeight.bold,
@@ -218,7 +221,7 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
                   color: primaryColor,
                 ),
                 SizedBox(width: 8.w),
-                CustomText(
+                TranslatedText(
                   title: "Complaint Details",
                   fontSize: 16.sp,
                   fontWeight: FontWeight.bold,
@@ -274,6 +277,12 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
           label: "Field Officer",
           value: controller.complaintDetails['field_name']?.toString() ?? 'N/A',
         ),
+
+        // _buildDetailItem(
+        //   icon: HugeIcons.strokeRoundedShieldUser,
+        //   label: "Source",
+        //   value: controller.complaintDetails['field_name']?.toString() ?? 'N/A',
+        // ),
       ],
     );
   }
@@ -296,12 +305,11 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: Colors.grey.shade600,
-                  ),
+                CustomText(
+                  title: label,
+                  textAlign: TextAlign.start,
+                  fontSize: 12.sp,
+                  color: Colors.grey.shade600,
                 ),
                 SizedBox(height: 2.h),
                 Text(
@@ -330,8 +338,8 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
       children: [
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 8.w),
-          child: Text(
-            "Attachments",
+          child: TranslatedText(
+            title: "Attachments",
             style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
           ),
         ),
@@ -344,15 +352,13 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
   }
 
   Widget _buildUpdatesSection() {
-    log('controller.complaintDetails');
-    log(controller.complaintDetails['comments'].toString());
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 8.w),
-          child: Text(
-            "Updates History",
+          child: TranslatedText(
+            title: "Updates History",
             style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
           ),
         ),

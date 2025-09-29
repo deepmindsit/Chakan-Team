@@ -161,6 +161,21 @@ class _EditProfileState extends State<EditProfile> {
                       onPressed: controller.updateProfile,
                     ),
 
+                    TextButton.icon(
+                      onPressed: () => Get.toNamed(Routes.deleteAccount),
+                      icon: Icon(
+                        HugeIcons.strokeRoundedDelete03,
+                        color: Colors.black,
+                        size: 22.sp,
+                      ),
+                      label: CustomText(
+                        title: 'Delete Account',
+                        fontSize: 14.sp,
+                        color: primaryBlack,
+                        textAlign: TextAlign.start,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                     // ElevatedButton.icon(
                     //   onPressed: () {},
                     //   icon: Icon(Icons.save, color: Colors.white, size: 20.sp),

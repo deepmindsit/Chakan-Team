@@ -24,6 +24,11 @@ abstract class ApiService {
   Future<dynamic> getComplaint(
       @Part(name: "user_id") String userId,
       @Part(name: "page_no") String pageNo,
+      @Part(name: "department") List<String> deptIds,
+      @Part(name: "status") String status,
+      @Part(name: "type") String source,
+      @Part(name: "date") String date,
+      @Part(name: "lang") String lang,
       );
 
   @POST(AllUrl.getComplaintDetails)

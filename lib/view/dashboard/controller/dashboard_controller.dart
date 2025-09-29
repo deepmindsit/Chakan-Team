@@ -12,8 +12,8 @@ class DashboardController extends GetxController {
 
   // =================== FETCH dashboard Data ===================
   /// Fetches dashboard
-  Future<void> getDashboard() async {
-    isLoading.value = true;
+  Future<void> getDashboard({bool load = true}) async {
+    if (load) isLoading.value = true;
     final userId = await LocalStorage.getString('user_id') ?? '';
     try {
       final res = await _apiService.getDashboard(userId);
@@ -26,7 +26,7 @@ class DashboardController extends GetxController {
       showToastNormal('Something went wrong. Please try again later.');
       debugPrint("Login error: $e");
     } finally {
-      isLoading.value = false;
+      if (load) isLoading.value = false;
     }
   }
 

@@ -67,6 +67,7 @@ export 'package:chakan_team/component/custom_button.dart';
 export 'package:chakan_team/component/custom_file_picker.dart';
 export 'package:chakan_team/component/dropdown_search_component.dart';
 export 'package:chakan_team/component/custom_attachment_preview.dart';
+export 'package:chakan_team/common/custom_translated_text.dart';
 
 //controller
 export 'package:chakan_team/view/onboarding/controller/onboarding_controller.dart';
@@ -82,6 +83,7 @@ export 'package:chakan_team/view/knowledge/controller/kms_controller.dart';
 export 'package:chakan_team/view/dashboard/controller/update_firebase_token.dart';
 export 'package:chakan_team/common/update_app.dart';
 export 'package:chakan_team/view/dashboard/controller/notification_controller.dart';
+export 'package:chakan_team/utils/translate_controller.dart';
 
 
 //plugins

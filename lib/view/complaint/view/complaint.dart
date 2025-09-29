@@ -1,5 +1,5 @@
 import 'package:chakan_team/utils/exported_path.dart';
-
+import 'package:chakan_team/view/complaint/widget/filter.dart';
 import '../../../utils/color.dart' as AppColors;
 
 class ComplaintScreen extends StatefulWidget {
@@ -15,6 +15,7 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.resetFilters();
       controller.getComplaintInitial();
     });
     super.initState();
@@ -28,6 +29,14 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
         title: 'Complaints',
         showBackButton: false,
         titleSpacing: null,
+        actions: [
+          IconButton(
+            onPressed: () {
+              Get.bottomSheet(isScrollControlled: true, ComplaintFilter());
+            },
+            icon: Icon(HugeIcons.strokeRoundedFilter),
+          ),
+        ],
       ),
       body: Obx(() {
         final complaints = controller.complaintList;

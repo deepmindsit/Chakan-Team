@@ -50,7 +50,7 @@ class DashboardCard extends StatelessWidget {
                 ),
                 SizedBox(width: 8.w),
                 Expanded(
-                  child: CustomText(
+                  child: TranslatedText(
                     title: title,
                     fontSize: 14.sp,
                     maxLines: 2,

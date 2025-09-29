@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:chakan_team/utils/exported_path.dart';
+import 'package:intl/intl.dart';
 
 @lazySingleton
 class ComplaintController extends GetxController {
@@ -28,20 +31,26 @@ class ComplaintController extends GetxController {
   final fieldOfficerList = [].obs;
   final statusList = [].obs;
 
-
-
-
-  final page = 1.obs;
+  final page = 0.obs;
   final hasNextPage = true.obs;
   final isMoreLoading = false.obs;
 
   /// Fetches getComplaintInitial
   Future<void> getComplaintInitial({bool showLoading = true}) async {
     if (showLoading) isLoading.value = true;
-    page.value = 1;
+    page.value = 0;
+    complaintList.clear();
     final userId = await LocalStorage.getString('user_id') ?? '';
     try {
-      final res = await _apiService.getComplaint(userId, page.value.toString());
+      final res = await _apiService.getComplaint(
+        userId,
+        page.value.toString(),
+        selectedDepartmentIds,
+        selectedStatus.value ?? '',
+        selectedSource.value ?? '',
+        getDateParam(),
+        'en',
+      );
       if (res['common']['status'] == true) {
         complaintList.value = res['data'] ?? [];
       }
@@ -59,7 +68,15 @@ class ComplaintController extends GetxController {
     final userId = await LocalStorage.getString('user_id') ?? '';
     try {
       page.value += 1;
-      final res = await _apiService.getComplaint(userId, page.value.toString());
+      final res = await _apiService.getComplaint(
+        userId,
+        page.value.toString(),
+        selectedDepartmentIds,
+        selectedStatus.value ?? '',
+        selectedSource.value ?? '',
+        getDateParam(),
+        'en',
+      );
       if (res['common']['status'] == true) {
         final List fetchedPosts = res['data'];
         if (fetchedPosts.isNotEmpty) {
@@ -76,12 +93,6 @@ class ComplaintController extends GetxController {
     }
   }
 
-
-
-
-
-
-
   Future<void> getStatus() async {
     final userId = await LocalStorage.getString('user_id') ?? '';
     try {
@@ -97,27 +108,13 @@ class ComplaintController extends GetxController {
     } finally {}
   }
 
-  // Future<void> getComplaint() async {
-  //   isLoading.value = true;
-  //   final userId = await LocalStorage.getString('user_id') ?? '';
-  //   try {
-  //     final res = await _apiService.getComplaint(userId);
-  //     if (res['common']['status'] == true) {
-  //       complaintList.value = res['data'] ?? [];
-  //     }
-  //   } catch (e) {
-  //     showToastNormal('Something went wrong. Please try again later.');
-  //     // debugPrint("Login error: $e");
-  //   } finally {
-  //     isLoading.value = false;
-  //   }
-  // }
-
   Future<void> getComplaintDetails(String complaintId) async {
     isDetailsLoading.value = true;
     final userId = await LocalStorage.getString('user_id') ?? '';
     try {
       final res = await _apiService.getComplaintDetails(userId, complaintId);
+      print('res');
+      log(res.toString());
       if (res['common']['status'] == true) {
         complaintDetails.value = res['data'][0] ?? {};
       } else {
@@ -267,32 +264,93 @@ class ComplaintController extends GetxController {
     }
   }
 
+  //////////////////////////////////////////Filter////////////////////////////////////////
 
+  final mainLoader = false.obs;
 
+  Future<void> loadInitialData() async {
+    mainLoader.value = true;
+    await Future.wait([getDepartmentFilter(), getStatus()]);
 
+    mainLoader.value = false;
+  }
 
+  Future<void> getDepartmentFilter() async {
+    final data = await LocalStorage.getJson("department");
+    if (data != null) {
+      departments.value = List<Map<String, dynamic>>.from(data);
+    }
+    print('departments');
+    print(departments);
+  }
 
+  final DateFormat _dateFormat = DateFormat('yyyy-MM-dd');
 
+  void setDateRange(String val) {
+    final now = DateTime.now();
+
+    switch (val) {
+      case "Today":
+        customStart = now;
+        customEnd = now;
+        break;
+
+      case "Yesterday":
+        customStart = now.subtract(Duration(days: 1));
+        customEnd = now.subtract(Duration(days: 1));
+        break;
+
+      case "This Week":
+        final firstDayOfWeek = now.subtract(
+          Duration(days: now.weekday - 1),
+        ); // Monday
+        final lastDayOfWeek = firstDayOfWeek.add(Duration(days: 6));
+        customStart = firstDayOfWeek;
+        customEnd = lastDayOfWeek;
+        break;
+
+      case "This Month":
+        final firstDayOfMonth = DateTime(now.year, now.month, 1);
+        final lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
+        customStart = firstDayOfMonth;
+        customEnd = lastDayOfMonth;
+        break;
+
+      case "Custom":
+        // keep existing pickCustomDateRange() logic
+        break;
+      default:
+        // If nothing selected, keep blank
+        customStart = null;
+        customEnd = null;
+    }
+  }
 
   // Department
-  var departments = ["Water", "Electricity", "Roads"].obs;
-  var selectedDepartments = <String>[].obs;
+  final departments = [].obs;
+  final selectedDepartments = <String>[].obs;
 
   // Date Range
-  var selectedDateRange = "Today".obs;
+  final selectedDateRange = RxnString();
   DateTime? customStart, customEnd;
 
-  // Status
-  var statusListFilter = ["Pending", "In Progress", "Resolved"];
-  var selectedStatusFilter = "Pending".obs;
+  final selectedDepartmentName = [].obs;
+  final selectedDepartmentIds = <String>[].obs;
 
-  // Complaint Type
-  var typeList = ["Type A", "Type B", "Type C"];
-  var selectedType = "Type A".obs;
+  // Status
+  // var statusListFilter = ["Pending", "In Progress", "Resolved"];
+  // var selectedStatusFilter = "Pending".obs;
 
   // Complaint Source
-  var sourceList = ["App", "Website", "Phone"];
-  var selectedSource = "App".obs;
+  final sourceList =
+      [
+        {"id": 1, "name": "Web"},
+        {"id": 2, "name": "App"},
+        {"id": 3, "name": "Toll Free"},
+        {"id": 4, "name": "Inward"},
+        {"id": 5, "name": "WhatsApp"},
+      ].obs;
+  final selectedSource = RxnString();
 
   void toggleDepartment(String dept) {
     if (selectedDepartments.contains(dept)) {
@@ -300,6 +358,13 @@ class ComplaintController extends GetxController {
     } else {
       selectedDepartments.add(dept);
     }
+  }
+
+  String getDateParam() {
+    if (customStart != null && customEnd != null) {
+      return "${_dateFormat.format(customStart!)} - ${_dateFormat.format(customEnd!)}";
+    }
+    return ""; // blank if not selected
   }
 
   Future<void> pickCustomDateRange() async {
@@ -311,24 +376,25 @@ class ComplaintController extends GetxController {
     if (picked != null) {
       customStart = picked.start;
       customEnd = picked.end;
+    } else {
+      // If user cancels, keep them null
+      customStart = null;
+      customEnd = null;
     }
   }
 
   void resetFilters() {
-    selectedDepartments.clear();
-    selectedDateRange.value = "Today";
-    selectedStatus.value = statusList.first;
-    selectedType.value = typeList.first;
-    selectedSource.value = sourceList.first;
+    applyFilters();
+    // selectedDepartmentFilter.value = null;
+    selectedDateRange.value = null;
+    selectedStatus.value = null;
+    selectedSource.value = null;
+    customStart = null;
+    customEnd = null;
   }
 
-  void applyFilters() {
-    // Here you can call API with selected filters
-    print("Departments: $selectedDepartments");
-    print("Date: ${selectedDateRange.value} $customStart - $customEnd");
-    print("Status: ${selectedStatus.value}");
-    print("Type: ${selectedType.value}");
-    print("Source: ${selectedSource.value}");
+  void applyFilters() async {
     Get.back();
+    await getComplaintInitial();
   }
 }

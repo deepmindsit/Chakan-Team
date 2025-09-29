@@ -60,7 +60,7 @@ class ComplaintCard extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Expanded(
-          child: CustomText(
+          child: TranslatedText(
             maxLines: 2,
             textAlign: TextAlign.start,
             title: title,
@@ -85,7 +85,7 @@ class ComplaintCard extends StatelessWidget {
 
   Widget _buildLocationText() {
     return Expanded(
-      child: CustomText(
+      child: TranslatedText(
         textAlign: TextAlign.start,
         maxLines: 2,
         title: location,
@@ -113,7 +113,7 @@ class ComplaintCard extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        CustomText(
+        TranslatedText(
           title: "Ticket No: $ticketNo",
           color: Colors.grey,
           fontSize: 12.sp,
