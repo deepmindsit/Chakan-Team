@@ -22,14 +22,14 @@ abstract class ApiService {
 
   @POST(AllUrl.getComplaint)
   Future<dynamic> getComplaint(
-      @Part(name: "user_id") String userId,
-      @Part(name: "page_no") String pageNo,
-      @Part(name: "department") List<String> deptIds,
-      @Part(name: "status") String status,
-      @Part(name: "type") String source,
-      @Part(name: "date") String date,
-      @Part(name: "lang") String lang,
-      );
+    @Part(name: "user_id") String userId,
+    @Part(name: "page_no") String pageNo,
+    @Part(name: "department[]") List<String> deptIds,
+    @Part(name: "status") String status,
+    @Part(name: "type") String source,
+    @Part(name: "date") String date,
+    @Part(name: "lang") String lang,
+  );
 
   @POST(AllUrl.getComplaintDetails)
   Future<dynamic> getComplaintDetails(
@@ -57,7 +57,12 @@ abstract class ApiService {
   });
 
   @POST(AllUrl.getTask)
-  Future<dynamic> getTask(@Part(name: "user_id") String userId);
+  Future<dynamic> getTask(
+    @Part(name: "user_id") String userId,
+    @Part(name: "page_no") String pageNo,
+    @Part(name: "status_id") String status,
+    @Part(name: "date") String date,
+  );
 
   @POST(AllUrl.getTaskDetails)
   Future<dynamic> getTaskDetails(
@@ -120,8 +125,17 @@ abstract class ApiService {
   @POST(AllUrl.deleteAccount)
   Future<dynamic> deleteAccount(@Part(name: "user_id") String userId);
 
+  @POST(AllUrl.getPublicService)
+  Future<dynamic> getPublicService(@Part(name: "user_id") String userId);
+
   @POST(AllUrl.getFiles)
-  Future<dynamic> getFiles(@Part(name: "user_id") String userId);
+  Future<dynamic> getFiles(
+    @Part(name: "user_id") String userId,
+    @Part(name: "page_no") String pageNo,
+    @Part(name: "status") String status,
+    @Part(name: "date") String date,
+    @Part(name: "public_service_id") String fileTypeId,
+  );
 
   @POST(AllUrl.getFileDetails)
   Future<dynamic> getFileDetails(

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:chakan_team/utils/exported_path.dart';
 import 'package:intl/intl.dart';
 
@@ -35,10 +33,16 @@ class ComplaintController extends GetxController {
   final hasNextPage = true.obs;
   final isMoreLoading = false.obs;
 
+  final showFieldOfficerError = false.obs;
+  final showHODError = false.obs;
+  final showWardError = false.obs;
+  final showDepartmentError = false.obs;
+
   /// Fetches getComplaintInitial
   Future<void> getComplaintInitial({bool showLoading = true}) async {
     if (showLoading) isLoading.value = true;
     page.value = 0;
+    hasNextPage.value = true;
     complaintList.clear();
     final userId = await LocalStorage.getString('user_id') ?? '';
     try {
@@ -49,14 +53,14 @@ class ComplaintController extends GetxController {
         selectedStatus.value ?? '',
         selectedSource.value ?? '',
         getDateParam(),
-        'en',
+        getIt<TranslateController>().lang.value == 'mr' ? 'mr' : 'en',
       );
       if (res['common']['status'] == true) {
         complaintList.value = res['data'] ?? [];
       }
     } catch (e) {
       showToastNormal('Something went wrong. Please try again later.');
-      // debugPrint("Login error: $e");
+      debugPrint("getComplaintInitial error: $e");
     } finally {
       if (showLoading) isLoading.value = false;
     }
@@ -75,7 +79,7 @@ class ComplaintController extends GetxController {
         selectedStatus.value ?? '',
         selectedSource.value ?? '',
         getDateParam(),
-        'en',
+        getIt<TranslateController>().lang.value == 'mr' ? 'mr' : 'en',
       );
       if (res['common']['status'] == true) {
         final List fetchedPosts = res['data'];
@@ -99,6 +103,7 @@ class ComplaintController extends GetxController {
       final res = await _apiService.getStatus(userId);
       if (res['common']['status'] == true) {
         statusList.value = res['data'] ?? [];
+        departments.value = res['user']['department'] ?? [];
       } else {
         showToastNormal(res['common']['message'] ?? 'Error fetching status');
       }
@@ -113,16 +118,15 @@ class ComplaintController extends GetxController {
     final userId = await LocalStorage.getString('user_id') ?? '';
     try {
       final res = await _apiService.getComplaintDetails(userId, complaintId);
-      print('res');
-      log(res.toString());
       if (res['common']['status'] == true) {
         complaintDetails.value = res['data'][0] ?? {};
-      } else {
-        showToastNormal(
-          res['common']['message'] ??
-              'Something went wrong. Please try again later.',
-        );
       }
+      // else {
+      //   showToastNormal(
+      //     // res['common']['message'] ??
+      //         'Something went wrong. Please try again later.',
+      //   );
+      // }
     } catch (e) {
       showToastNormal('Something went wrong. Please try again later.');
       // debugPrint("Login error: $e");
@@ -146,6 +150,8 @@ class ComplaintController extends GetxController {
         descriptionController.text.trim(),
         attachment: docs,
       );
+      print('addComplaintComment');
+      print(res);
       if (res['common']['status'] == true) {
         showToastNormal(res['common']['message']);
         Get.back();
@@ -193,8 +199,6 @@ class ComplaintController extends GetxController {
     final userId = await LocalStorage.getString('user_id') ?? '';
     try {
       final res = await _apiService.getWard(userId);
-      print('getWard');
-      print(res);
       if (res['common']['status'] == true) {
         wardList.value = res['data'] ?? [];
       } else {
@@ -270,19 +274,16 @@ class ComplaintController extends GetxController {
 
   Future<void> loadInitialData() async {
     mainLoader.value = true;
-    await Future.wait([getDepartmentFilter(), getStatus()]);
-
+    await Future.wait([getStatus()]);
     mainLoader.value = false;
   }
 
-  Future<void> getDepartmentFilter() async {
-    final data = await LocalStorage.getJson("department");
-    if (data != null) {
-      departments.value = List<Map<String, dynamic>>.from(data);
-    }
-    print('departments');
-    print(departments);
-  }
+  // Future<void> getDepartmentFilter() async {
+  //   final data = await LocalStorage.getJson("department");
+  //   if (data != null) {
+  //     departments.value = List<Map<String, dynamic>>.from(data);
+  //   }
+  // }
 
   final DateFormat _dateFormat = DateFormat('yyyy-MM-dd');
 
@@ -337,10 +338,6 @@ class ComplaintController extends GetxController {
   final selectedDepartmentName = [].obs;
   final selectedDepartmentIds = <String>[].obs;
 
-  // Status
-  // var statusListFilter = ["Pending", "In Progress", "Resolved"];
-  // var selectedStatusFilter = "Pending".obs;
-
   // Complaint Source
   final sourceList =
       [
@@ -391,6 +388,8 @@ class ComplaintController extends GetxController {
     selectedSource.value = null;
     customStart = null;
     customEnd = null;
+    selectedDepartmentIds.clear();
+    selectedDepartmentName.clear();
   }
 
   void applyFilters() async {

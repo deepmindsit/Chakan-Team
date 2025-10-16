@@ -11,6 +11,7 @@ class _SplashScreenState extends State<SplashScreen>
     with TickerProviderStateMixin {
   final controller = getIt<OnboardingController>();
   String? token;
+
   @override
   void initState() {
     super.initState();

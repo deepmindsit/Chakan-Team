@@ -9,7 +9,7 @@ class AttachmentList extends StatelessWidget {
   Widget build(BuildContext context) {
     return GlassCard(
       children: [
-        // sectionTitleWithIcon('📎 Attachments'),
+        sectionTitleWithIcon('📎 Attachments'),
         AttachmentPreviewList(
           attachments: attachments,
           onDownload: (path) => downloadFile(path),

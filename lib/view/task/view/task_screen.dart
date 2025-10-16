@@ -1,4 +1,5 @@
 import 'package:chakan_team/utils/exported_path.dart';
+import '../../../utils/color.dart' as AppColors;
 
 class TaskScreen extends StatefulWidget {
   const TaskScreen({super.key});
@@ -13,7 +14,9 @@ class _TaskScreenState extends State<TaskScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.getTask();
+      controller.resetFilters();
+      controller.getTaskInitial();
+      controller.getTaskStatus();
     });
     super.initState();
   }
@@ -26,6 +29,14 @@ class _TaskScreenState extends State<TaskScreen> {
         title: 'Tasks',
         showBackButton: false,
         titleSpacing: null,
+        actions: [
+          IconButton(
+            onPressed: () {
+              Get.bottomSheet(isScrollControlled: true, TaskFilter());
+            },
+            icon: Icon(HugeIcons.strokeRoundedFilter),
+          ),
+        ],
       ),
       floatingActionButton:
           getIt<UserService>().rollId.value != '5'
@@ -42,46 +53,77 @@ class _TaskScreenState extends State<TaskScreen> {
         final task = controller.taskList;
 
         if (controller.isLoading.isTrue) {
-          // return LoadingWidget(color: primaryColor);
           return taskShimmer();
         }
 
         if (task.isEmpty) {
           return const Center(child: Text("No task available."));
         }
-
-        return LiveList.options(
-          shrinkWrap: true,
-          physics: BouncingScrollPhysics(),
-          options: LiveOptions(
-            delay: Duration.zero,
-            showItemInterval: Duration(milliseconds: 100),
-            showItemDuration: Duration(milliseconds: 250),
-            reAnimateOnVisibility: false,
-          ),
-          itemCount: task.length,
-          itemBuilder: (context, index, animation) {
-            return FadeTransition(
-              opacity: animation,
-              child: SlideTransition(
-                position: Tween<Offset>(
-                  begin: Offset(0, 0.1),
-                  end: Offset.zero,
-                ).animate(animation),
-                child: TaskCard(
-                  data: task[index],
-                  onTap:
-                      () => Get.toNamed(
-                        Routes.taskDetails,
-                        arguments: {'id': task[index]['id'].toString()},
-                      ),
-                ),
-              ),
-            );
+        return NotificationListener<ScrollNotification>(
+          onNotification: (scrollNotification) {
+            if (scrollNotification is ScrollEndNotification &&
+                scrollNotification.metrics.pixels ==
+                    scrollNotification.metrics.maxScrollExtent) {
+              controller.getTaskLoadMore();
+            }
+            return true;
           },
+          child: SingleChildScrollView(
+            child: Column(
+              spacing: 10,
+              children: [
+                LiveList.options(
+                  shrinkWrap: true,
+                  physics: BouncingScrollPhysics(),
+                  options: LiveOptions(
+                    delay: Duration.zero,
+                    showItemInterval: Duration(milliseconds: 100),
+                    showItemDuration: Duration(milliseconds: 250),
+                    reAnimateOnVisibility: false,
+                  ),
+                  itemCount: task.length,
+                  itemBuilder: (context, index, animation) {
+                    return FadeTransition(
+                      opacity: animation,
+                      child: SlideTransition(
+                        position: Tween<Offset>(
+                          begin: Offset(0, 0.1),
+                          end: Offset.zero,
+                        ).animate(animation),
+                        child: TaskCard(
+                          data: task[index],
+                          onTap:
+                              () => Get.toNamed(
+                                Routes.taskDetails,
+                                arguments: {'id': task[index]['id'].toString()},
+                              ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                task.isEmpty ? const SizedBox() : buildLoader(),
+              ],
+            ),
+          ),
         );
       }),
     );
+  }
+
+  Widget buildLoader() {
+    if (controller.isMoreLoading.value) {
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: LoadingWidget(color: AppColors.primaryColor),
+      );
+    } else if (!controller.hasNextPage.value) {
+      return const Padding(
+        padding: EdgeInsets.all(8.0),
+        child: Center(child: Text('No more data')),
+      );
+    }
+    return const SizedBox.shrink();
   }
 }
 

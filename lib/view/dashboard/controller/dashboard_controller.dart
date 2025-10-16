@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:chakan_team/utils/exported_path.dart';
 
 @lazySingleton
@@ -17,8 +15,6 @@ class DashboardController extends GetxController {
     final userId = await LocalStorage.getString('user_id') ?? '';
     try {
       final res = await _apiService.getDashboard(userId);
-      print('getDashboard');
-      log(res.toString());
       if (res['common']['status'] == true) {
         dashboardData.value = res['data'][0] ?? {};
       }
@@ -36,7 +32,7 @@ class DashboardController extends GetxController {
       'pending': 5,
       'inProgress': 3,
       'complete': 7,
-      'reject': 2,
+      'rejected': 2,
     },
     {
       'department': 'Town Planning',

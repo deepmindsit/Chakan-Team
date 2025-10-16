@@ -31,7 +31,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
             children: [
               //header
               _buildHeader(),
-
+              _buildDepartment(),
               _buildDrawerItem(
                 icon: HugeIcons.strokeRoundedAnalyticsUp,
                 title: 'Dashboard',
@@ -146,6 +146,55 @@ class _CustomDrawerState extends State<CustomDrawer> {
       onTap: onTap,
       hoverColor: Colors.grey.shade200,
       // contentPadding: EdgeInsets.symmetric(horizontal: 0.w),
+    );
+  }
+
+  Widget _buildDepartment() {
+    return Obx(
+      () => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        child: Container(
+          decoration: BoxDecoration(
+            color: primaryColor.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: primaryColor.withValues(alpha: 0.3)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 12.0,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: primaryColor,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.business_center,
+                    color: Colors.white,
+                    size: 16,
+                  ),
+                ),
+                SizedBox(width: 12),
+                Expanded(
+                  child: CustomText(
+                    title: controller.userData['department']?.toString() ?? '-',
+                    fontSize: 15.sp,
+                    color: primaryColor,
+                    textAlign: TextAlign.start,
+                    maxLines: 3,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 

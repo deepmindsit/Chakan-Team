@@ -9,7 +9,7 @@ class FirebaseTokenController extends GetxController {
 
     final userId = await LocalStorage.getString('user_id') ?? '';
     try {
-     final res =  await _apiService.updateFirebaseToken(userId, token.toString());
+     await _apiService.updateFirebaseToken(userId, token.toString());
     } catch (e) {
       showToastNormal('Something went wrong. Please try again later.');
       debugPrint("Login error: $e");

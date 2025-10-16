@@ -48,6 +48,7 @@ class AllUrl {
   static const String legalPage = '$baseUrl/get-legal-page';
   static const String getProfile = '$baseUrl/get-profile';
   static const String getFiles = '$baseUrl/get-files';
+  static const String getPublicService = '$baseUrl/get-public-service';
   static const String getFileDetails = '$baseUrl/get-file-details';
   static const String addFileComment = '$baseUrl/add-file-comment';
   static const String updateProfile = '$baseUrl/update-profile';

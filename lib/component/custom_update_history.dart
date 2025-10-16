@@ -10,7 +10,7 @@ class UpdateHistoryList extends StatelessWidget {
   Widget build(BuildContext context) {
     return GlassCard(
       children: [
-        // if (title != null) sectionTitleWithIcon(title!),
+        if (title != null) sectionTitleWithIcon(title!),
 
         ...updateRecords.map(
           (record) => Container(

@@ -1,5 +1,7 @@
 import 'package:chakan_team/utils/exported_path.dart';
 
+import '../../../utils/color.dart' as AppColors;
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -13,7 +15,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.getFiles();
+      controller.resetFilters();
+      // controller.getFilesInitial();
     });
     super.initState();
   }
@@ -26,6 +29,14 @@ class _HomeScreenState extends State<HomeScreen> {
         title: 'E-Office',
         showBackButton: false,
         titleSpacing: null,
+        actions: [
+          IconButton(
+            onPressed: () {
+              Get.bottomSheet(isScrollControlled: true, FileFilter());
+            },
+            icon: Icon(HugeIcons.strokeRoundedFilter),
+          ),
+        ],
       ),
       floatingActionButton:
           getIt<UserService>().rollId.value == '1' ||
@@ -42,72 +53,119 @@ class _HomeScreenState extends State<HomeScreen> {
         if (file.isEmpty) {
           return const Center(child: Text("No Files available."));
         }
-
-        return LiveList.options(
-          shrinkWrap: true,
-          physics: BouncingScrollPhysics(),
-          options: LiveOptions(
-            delay: Duration.zero,
-            showItemInterval: Duration(milliseconds: 100),
-            showItemDuration: Duration(milliseconds: 250),
-            reAnimateOnVisibility: false,
-          ),
-          itemCount: controller.fileList.length,
-          itemBuilder: (context, index, animation) {
-            final file = controller.fileList[index];
-
-            return FadeTransition(
-              opacity: animation,
-              child: SlideTransition(
-                position: Tween<Offset>(
-                  begin: Offset(0, 0.05),
-                  end: Offset.zero,
-                ).animate(animation),
-                child: FileCard(
-                  data: file,
-                  onTap:
-                      () => Get.toNamed(
-                        Routes.fileDetails,
-                        arguments: {'id': file['id'].toString()},
-                      ),
-                ),
-              ),
-            );
+        return NotificationListener<ScrollNotification>(
+          onNotification: (scrollNotification) {
+            if (scrollNotification is ScrollEndNotification &&
+                scrollNotification.metrics.pixels ==
+                    scrollNotification.metrics.maxScrollExtent) {
+              controller.getFilesLoadMore();
+            }
+            return true;
           },
+          child: SingleChildScrollView(
+            child: Column(
+              spacing: 10,
+              children: [
+                LiveList.options(
+                  shrinkWrap: true,
+                  physics: BouncingScrollPhysics(),
+                  options: LiveOptions(
+                    delay: Duration.zero,
+                    showItemInterval: Duration(milliseconds: 100),
+                    showItemDuration: Duration(milliseconds: 250),
+                    reAnimateOnVisibility: false,
+                  ),
+                  itemCount: controller.fileList.length,
+                  itemBuilder: (context, index, animation) {
+                    final file = controller.fileList[index];
+
+                    return FadeTransition(
+                      opacity: animation,
+                      child: SlideTransition(
+                        position: Tween<Offset>(
+                          begin: Offset(0, 0.05),
+                          end: Offset.zero,
+                        ).animate(animation),
+                        child: FileCard(
+                          data: file,
+                          onTap:
+                              () => Get.toNamed(
+                                Routes.fileDetails,
+                                arguments: {'id': file['id'].toString()},
+                              ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                file.isEmpty ? const SizedBox() : buildLoader(),
+              ],
+            ),
+          ),
         );
       }),
 
-      // ListView.builder(
-      //   itemCount: fileList.length,
-      //   shrinkWrap: true,
-      //   physics: BouncingScrollPhysics(),
-      //   itemBuilder: (context, index) {
-      //     final file = fileList[index];
+      // Obx(() {
+      //   final file = controller.fileList;
       //
-      //     return FileCard(
-      //       data: file,
-      //       onTap: () => Get.toNamed(Routes.fileDetails),
-      //     );
-      //   },
-      // ),
-
-      // SingleChildScrollView(
-      //   // padding: EdgeInsets.all(12.w),
-      //   child: Column(
-      //     children:
-      //         fileList
-      //             .map(
-      //               (item) => FileCard(
-      //                 data: item,
-      //                 onTap: () => Get.toNamed(Routes.fileDetails),
-      //               ),
-      //             )
-      //             .toList(),
-      //   ),
-      // ),
+      //   if (controller.isLoading.isTrue) {
+      //     return taskShimmer();
+      //   }
+      //
+      //   if (file.isEmpty) {
+      //     return const Center(child: Text("No Files available."));
+      //   }
+      //
+      //   return LiveList.options(
+      //     shrinkWrap: true,
+      //     physics: BouncingScrollPhysics(),
+      //     options: LiveOptions(
+      //       delay: Duration.zero,
+      //       showItemInterval: Duration(milliseconds: 100),
+      //       showItemDuration: Duration(milliseconds: 250),
+      //       reAnimateOnVisibility: false,
+      //     ),
+      //     itemCount: controller.fileList.length,
+      //     itemBuilder: (context, index, animation) {
+      //       final file = controller.fileList[index];
+      //
+      //       return FadeTransition(
+      //         opacity: animation,
+      //         child: SlideTransition(
+      //           position: Tween<Offset>(
+      //             begin: Offset(0, 0.05),
+      //             end: Offset.zero,
+      //           ).animate(animation),
+      //           child: FileCard(
+      //             data: file,
+      //             onTap:
+      //                 () => Get.toNamed(
+      //                   Routes.fileDetails,
+      //                   arguments: {'id': file['id'].toString()},
+      //                 ),
+      //           ),
+      //         ),
+      //       );
+      //     },
+      //   );
+      // }),
     );
   }
 
+  Widget buildLoader() {
+    if (controller.isMoreLoading.value) {
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: LoadingWidget(color: AppColors.primaryColor),
+      );
+    } else if (!controller.hasNextPage.value) {
+      return const Padding(
+        padding: EdgeInsets.all(8.0),
+        child: Center(child: Text('No more data')),
+      );
+    }
+    return const SizedBox.shrink();
+  }
   // SingleChildScrollView(
   //   padding: EdgeInsets.all(12.w),
   //   child: Column(

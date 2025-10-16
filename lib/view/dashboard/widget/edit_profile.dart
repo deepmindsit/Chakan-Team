@@ -45,79 +45,88 @@ class _EditProfileState extends State<EditProfile> {
                       onTap: controller.pickImage,
                       child: Stack(
                         children: [
+
                           // CircleAvatar(
-                          //   radius: 35.r,
-                          //   backgroundColor: Colors.grey.shade300,
-                          //   child: ClipOval(
-                          //     child: FadeInImage(
-                          //       placeholder: AssetImage(Images.fevicon),
-                          //       image: NetworkImage(
-                          //         controller.userData['profile_image'],
+                          //   backgroundColor: Colors.grey,
+                          //   radius: 51.r,
+                          //   child: CircleAvatar(
+                          //     radius: 50.r,
+                          //     backgroundColor: Colors.white,
+                          //
+                          //     // backgroundImage:
+                          //     //     controller.profileImage.value != null
+                          //     //         ? FileImage(
+                          //     //           controller.profileImage.value!,
+                          //     //         )
+                          //     //         : AssetImage(Images.fevicon)
+                          //     //             as ImageProvider,
+                          //     child: ClipOval(
+                          //       child: FadeInImage(
+                          //         placeholder: AssetImage(Images.fevicon),
+                          //         image:
+                          //             controller.profileImage.value != null
+                          //                 ? FileImage(
+                          //                   controller.profileImage.value!,
+                          //                 )
+                          //                 : controller.userData['profile_image']
+                          //                     .toString()
+                          //                     .isNotEmpty
+                          //                 ? NetworkImage(
+                          //                   controller
+                          //                       .userData['profile_image'],
+                          //                 )
+                          //                 : AssetImage(Images.fevicon)
+                          //                     as ImageProvider,
+                          //         imageErrorBuilder: (
+                          //           context,
+                          //           error,
+                          //           stackTrace,
+                          //         ) {
+                          //           return Image.asset(
+                          //             Images.fevicon,
+                          //             width: 50.w,
+                          //             height: 50.h,
+                          //             fit: BoxFit.cover,
+                          //           );
+                          //         },
+                          //         fit: BoxFit.cover,
+                          //         fadeInDuration: const Duration(
+                          //           milliseconds: 300,
+                          //         ),
                           //       ),
-                          //       imageErrorBuilder: (context, error, stackTrace) {
-                          //         return Image.asset(
-                          //           Images.fevicon,
-                          //           width: 50.w,
-                          //           height: 50.h,
-                          //           fit: BoxFit.cover,
-                          //         );
-                          //       },
-                          //       fit: BoxFit.cover,
-                          //       fadeInDuration: const Duration(milliseconds: 300),
                           //     ),
                           //   ),
                           // ),
                           CircleAvatar(
-                            backgroundColor: Colors.grey,
+                            backgroundColor: Colors.grey.shade300,
                             radius: 51.r,
                             child: CircleAvatar(
                               radius: 50.r,
                               backgroundColor: Colors.white,
-
-                              // backgroundImage:
-                              //     controller.profileImage.value != null
-                              //         ? FileImage(
-                              //           controller.profileImage.value!,
-                              //         )
-                              //         : AssetImage(Images.fevicon)
-                              //             as ImageProvider,
                               child: ClipOval(
                                 child: FadeInImage(
                                   placeholder: AssetImage(Images.fevicon),
-                                  image:
-                                      controller.profileImage.value != null
-                                          ? FileImage(
-                                            controller.profileImage.value!,
-                                          )
-                                          : controller.userData['profile_image']
-                                              .toString()
-                                              .isNotEmpty
-                                          ? NetworkImage(
-                                            controller
-                                                .userData['profile_image'],
-                                          )
-                                          : AssetImage(Images.fevicon)
-                                              as ImageProvider,
-                                  imageErrorBuilder: (
-                                    context,
-                                    error,
-                                    stackTrace,
-                                  ) {
+                                  image: controller.profileImage.value != null
+                                      ? FileImage(controller.profileImage.value!)
+                                      : (controller.userData['profile_image'] != null &&
+                                      controller.userData['profile_image'].toString().isNotEmpty)
+                                      ? NetworkImage(controller.userData['profile_image'])
+                                      : AssetImage(Images.fevicon),
+                                  imageErrorBuilder: (context, error, stackTrace) {
                                     return Image.asset(
                                       Images.fevicon,
-                                      width: 50.w,
-                                      height: 50.h,
+                                      width: 100.w,
+                                      height: 100.h,
                                       fit: BoxFit.cover,
                                     );
                                   },
                                   fit: BoxFit.cover,
-                                  fadeInDuration: const Duration(
-                                    milliseconds: 300,
-                                  ),
+                                  fadeInDuration: const Duration(milliseconds: 300),
                                 ),
                               ),
                             ),
                           ),
+
                           Positioned(
                             bottom: 0,
                             right: 0,

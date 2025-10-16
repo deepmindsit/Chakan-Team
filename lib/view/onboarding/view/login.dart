@@ -154,24 +154,24 @@ class LoginScreen extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            GestureDetector(
-              child: CustomText(
-                title: "Terms & Conditions ".tr,
-                fontSize: Get.width * 0.035.sp,
-                color: primaryColor,
-                fontWeight: FontWeight.w500,
-              ),
-              onTap: () {
-                Get.to(
-                  () => const PolicyData(slug: 'terms_and_conditions_page'),
-                );
-              },
-            ),
-            CustomText(
-              title: "and ",
-              fontSize: Get.width * 0.035.sp,
-              color: Theme.of(Get.context!).textTheme.titleMedium!.color,
-            ),
+            // GestureDetector(
+            //   child: CustomText(
+            //     title: "Terms & Conditions ".tr,
+            //     fontSize: Get.width * 0.035.sp,
+            //     color: primaryColor,
+            //     fontWeight: FontWeight.w500,
+            //   ),
+            //   onTap: () {
+            //     Get.to(
+            //       () => const PolicyData(slug: 'terms_and_conditions_page'),
+            //     );
+            //   },
+            // ),
+            // CustomText(
+            //   title: "and ",
+            //   fontSize: Get.width * 0.035.sp,
+            //   color: Theme.of(Get.context!).textTheme.titleMedium!.color,
+            // ),
             GestureDetector(
               child: CustomText(
                 title: "Privacy Policy".tr,

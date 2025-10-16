@@ -54,15 +54,13 @@ class FileCard extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                data['file_number'] ?? '',
-                                style: TextStyle(
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.grey.shade800,
-                                ),
+                              CustomText(
+                                title: data['file_number'] ?? '',
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey.shade800,
+                                textAlign: TextAlign.start,
                                 maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
                               ),
                               SizedBox(height: 4.h),
                               Text(
@@ -71,6 +69,7 @@ class FileCard extends StatelessWidget {
                                   fontSize: 13.sp,
                                   color: Colors.grey.shade600,
                                   fontWeight: FontWeight.w500,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ],
@@ -87,25 +86,6 @@ class FileCard extends StatelessWidget {
                   ),
                 ],
               ),
-              // SizedBox(height: 12.h),
-              //
-              // /// Subject/Description
-              // Container(
-              //   padding: EdgeInsets.all(12.w),
-              //   decoration: BoxDecoration(
-              //     color: Colors.grey.shade50,
-              //     borderRadius: BorderRadius.circular(12.r),
-              //   ),
-              //   child: Text(
-              //     data['subject'] ?? 'No subject provided',
-              //     style: TextStyle(
-              //       fontSize: 14.sp,
-              //       color: Colors.grey.shade700,
-              //     ),
-              //     maxLines: 2,
-              //     overflow: TextOverflow.ellipsis,
-              //   ),
-              // ),
               SizedBox(height: 12.h),
 
               /// Metadata Row (Creator + Dates)
@@ -136,13 +116,12 @@ class FileCard extends StatelessWidget {
                         ),
                         SizedBox(width: 6.w),
                         Flexible(
-                          child: Text(
-                            'By ${data['created_by'] ?? '-'}',
-                            style: TextStyle(
-                              fontSize: 14.sp,
-                              color: Colors.grey.shade600,
-                            ),
-                            overflow: TextOverflow.ellipsis,
+                          child: CustomText(
+                            title: 'By ${data['created_by'] ?? '-'}',
+                            textAlign: TextAlign.start,
+                            fontSize: 14.sp,
+                            color: Colors.grey.shade600,
+                            // overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],
@@ -289,7 +268,7 @@ class FileCard extends StatelessWidget {
 
 class StatusBadge extends StatelessWidget {
   final String status;
-  final int color ;
+  final int color;
 
   const StatusBadge({super.key, required this.status, required this.color});
 
@@ -305,13 +284,11 @@ class StatusBadge extends StatelessWidget {
           width: 1,
         ),
       ),
-      child: TranslatedText(title:
-        status,
-        style: TextStyle(
-          fontSize: 12.sp,
-          color: Color(color),
-          fontWeight: FontWeight.w600,
-        ),
+      child: CustomText(
+        title: status,
+        fontSize: 12.sp,
+        color: Color(color),
+        fontWeight: FontWeight.w600,
       ),
     );
   }

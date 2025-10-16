@@ -8,9 +8,9 @@ class FileDetails extends StatefulWidget {
 }
 
 class _FileDetailsState extends State<FileDetails> {
-  String selectedStatus = 'Approved';
-  final remarkController = TextEditingController();
-  List<String> newAttachments = [];
+  // String selectedStatus = 'Approved';
+  // final remarkController = TextEditingController();
+  // List<String> newAttachments = [];
 
   final controller = getIt<AddFileController>();
 
@@ -66,24 +66,6 @@ class _FileDetailsState extends State<FileDetails> {
       }),
       floatingActionButton: _buildUpdateFAB(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      // bottomSheet: MessageInputBox(
-      //   remarkController: remarkController,
-      //   selectedStatus: selectedStatus,
-      //   statusOptions: ['Approved', 'Pending', 'Rejected'],
-      //   onAttachPressed: _pickFiles,
-      //   onSendPressed: () {
-      //     debugPrint("Message: ${remarkController.text}");
-      //     debugPrint("Status: $selectedStatus");
-      //     debugPrint("New files: $newAttachments");
-      //   },
-      //   onStatusChanged: (value) {
-      //     if (value != null) {
-      //       setState(() {
-      //         selectedStatus = value;
-      //       });
-      //     }
-      //   },
-      // ),
     );
   }
 
@@ -231,7 +213,7 @@ class _FileDetailsState extends State<FileDetails> {
   Widget _buildCategory() {
     return GlassCard(
       children: [
-        sectionTitleWithIcon('📝 Subject And Category'),
+        sectionTitleWithIcon('📝 Subject'),
         SizedBox(height: 8.h),
         Row(
           children: [
@@ -496,8 +478,8 @@ class _FileDetailsState extends State<FileDetails> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
+                TranslatedText(
+                  title: title,
                   style: TextStyle(
                     fontSize: 12.sp,
                     color: Colors.grey.shade600,
@@ -541,8 +523,9 @@ class _FileDetailsState extends State<FileDetails> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                title,
+              TranslatedText(
+                title: title,
+                textAlign: TextAlign.start,
                 style: TextStyle(fontSize: 12.sp, color: Colors.grey.shade600),
               ),
               Text(

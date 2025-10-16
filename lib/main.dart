@@ -43,11 +43,10 @@ class MyApp extends StatelessWidget {
         defaultTransition: Transition.fadeIn,
         transitionDuration: const Duration(milliseconds: 300),
         initialRoute: Routes.splash,
-        // home: CapturePage(),
+        getPages: AppRoutes.routes,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: primaryColor),
         ),
-        getPages: AppRoutes.routes,
       ),
     );
   }

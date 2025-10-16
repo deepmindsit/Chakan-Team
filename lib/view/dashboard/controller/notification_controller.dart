@@ -15,6 +15,7 @@ class NotificationController extends GetxController {
   Future<void> getNotificationInitial({bool showLoading = true}) async {
     if (showLoading) isLoading.value = true;
     page.value = 0;
+    hasNextPage.value = true;
     final userId = await LocalStorage.getString('user_id') ?? '';
     try {
       final res = await _apiService.getNotification(

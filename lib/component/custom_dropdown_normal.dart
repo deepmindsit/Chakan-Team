@@ -48,7 +48,7 @@ class AppDropdownField extends StatelessWidget {
             icon: const Icon(Icons.keyboard_arrow_down, color: Colors.grey),
             decoration: InputDecoration(
               contentPadding: EdgeInsets.symmetric(
-                horizontal: 0.w,
+                horizontal: 12.w,
                 vertical: 12,
               ),
               isDense: true,
@@ -83,7 +83,7 @@ class AppDropdownField extends StatelessWidget {
                         child:
                             isWithColor == true
                                 ? Row(
-                              spacing: 8,
+                                  spacing: 8,
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     CircleAvatar(

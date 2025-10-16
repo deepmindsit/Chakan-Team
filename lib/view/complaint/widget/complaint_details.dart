@@ -145,7 +145,7 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
                   color: Colors.grey,
                 ),
                 SizedBox(width: 8.w),
-                TranslatedText(
+                CustomText(
                   title:
                       "Track ID: ${controller.complaintDetails['code']?.toString() ?? 'N/A'}",
                   fontSize: 14.sp,
@@ -278,11 +278,11 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
           value: controller.complaintDetails['field_name']?.toString() ?? 'N/A',
         ),
 
-        // _buildDetailItem(
-        //   icon: HugeIcons.strokeRoundedShieldUser,
-        //   label: "Source",
-        //   value: controller.complaintDetails['field_name']?.toString() ?? 'N/A',
-        // ),
+        _buildDetailItem(
+          icon: HugeIcons.strokeRoundedShieldUser,
+          label: "Source",
+          value: controller.complaintDetails['source']?.toString() ?? 'N/A',
+        ),
       ],
     );
   }

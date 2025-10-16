@@ -1,4 +1,5 @@
 import 'package:chakan_team/utils/exported_path.dart';
+import 'package:intl/intl.dart';
 
 @lazySingleton
 class TaskController extends GetxController {
@@ -10,6 +11,7 @@ class TaskController extends GetxController {
 
   // Loaders
   final isLoading = false.obs;
+  final isStatusLoading = false.obs;
   final isDetailsLoading = false.obs;
   final isMainLoading = false.obs;
   final isAddingLoading = false.obs;
@@ -36,11 +38,8 @@ class TaskController extends GetxController {
   RxList<bool> isSelected = [true, false, false, false].obs;
   final selectedEndDate = RxnString();
 
-  void selectPriority(int index) {
-    for (int i = 0; i < isSelected.length; i++) {
-      isSelected[i] = i == index;
-    }
-  }
+  final showPriorityError = false.obs;
+  final showAssigneeError = false.obs;
 
   @override
   void onClose() {
@@ -60,21 +59,80 @@ class TaskController extends GetxController {
   }
 
   /// Fetches all tasks for the logged-in user
-  Future<void> getTask() async {
-    isLoading.value = true;
+
+  final page = 0.obs;
+  final hasNextPage = true.obs;
+  final isMoreLoading = false.obs;
+
+  Future<void> getTaskInitial({bool showLoading = true}) async {
+    if (showLoading) isLoading.value = true;
+    page.value = 0;
+    taskList.clear();
     final userId = await LocalStorage.getString('user_id') ?? '';
     try {
-      final res = await _apiService.getTask(userId);
+      final res = await _apiService.getTask(
+        userId,
+        page.value.toString(),
+        selectedStatus.value ?? '',
+        getDateParam(),
+      );
+
       if (res['common']['status'] == true) {
         taskList.value = res['data'] ?? [];
       }
     } catch (e) {
       showToastNormal('Something went wrong. Please try again later.');
-      debugPrint("Login error: $e");
+      // debugPrint("Login error: $e");
     } finally {
-      isLoading.value = false;
+      if (showLoading) isLoading.value = false;
     }
   }
+
+  /// Fetches getTaskLoadMore
+  Future<void> getTaskLoadMore() async {
+    isMoreLoading.value = true;
+    final userId = await LocalStorage.getString('user_id') ?? '';
+    try {
+      page.value += 1;
+      final res = await _apiService.getTask(
+        userId,
+        page.value.toString(),
+        selectedStatus.value ?? '',
+        getDateParam(),
+      );
+      if (res['common']['status'] == true) {
+        final List fetchedPosts = res['data'];
+        if (fetchedPosts.isNotEmpty) {
+          taskList.addAll(fetchedPosts);
+        } else {
+          hasNextPage.value = false;
+        }
+      } else {
+        hasNextPage.value = false;
+      }
+    } catch (e) {
+      showToastNormal('Something went wrong. Please try again later.');
+      // debugPrint("Login error: $e");
+    } finally {
+      isMoreLoading.value = false;
+    }
+  }
+
+  // Future<void> getTask() async {
+  //   isLoading.value = true;
+  //   final userId = await LocalStorage.getString('user_id') ?? '';
+  //   try {
+  //     final res = await _apiService.getTask(userId, page.value.toString());
+  //     if (res['common']['status'] == true) {
+  //       taskList.value = res['data'] ?? [];
+  //     }
+  //   } catch (e) {
+  //     showToastNormal('Something went wrong. Please try again later.');
+  //     debugPrint("Login error: $e");
+  //   } finally {
+  //     isLoading.value = false;
+  //   }
+  // }
 
   /// Fetches task details by [taskId]
   Future<void> getTaskDetails(String taskId) async {
@@ -101,7 +159,9 @@ class TaskController extends GetxController {
 
   /// Fetches list of available statuses
   Future<void> getTaskStatus() async {
+    isStatusLoading.value = true;
     await _fetchDropdownData(_apiService.getTaskStatus, statusList);
+    isStatusLoading.value = false;
   }
 
   /// Fetches list of assignees
@@ -175,7 +235,7 @@ class TaskController extends GetxController {
       if (res['common']['status'] == true) {
         showToastNormal(res['common']['message'] ?? 'New Task added');
         resetForm();
-        getTask();
+        await getTaskInitial();
         Get.back();
         // await getTaskDetails(taskId);
       }
@@ -190,6 +250,14 @@ class TaskController extends GetxController {
   void _handleError(String message, Object error) {
     showToastNormal('$message. Please try again later.');
     // debugPrint('$message: $error');
+  }
+
+  final DateFormat _dateFormat = DateFormat('yyyy-MM-dd');
+  String getDateParam() {
+    if (customStart != null && customEnd != null) {
+      return "${_dateFormat.format(customStart!)} - ${_dateFormat.format(customEnd!)}";
+    }
+    return ""; // blank if not selected
   }
 
   void resetForm() {
@@ -209,6 +277,81 @@ class TaskController extends GetxController {
 
     // Reset form validation state
     addTaskFormKey.currentState?.reset();
+  }
+
+  //////////////////////////////filter//////////////////////////////////////
+  // Date Range
+  final selectedDateRange = RxnString();
+  DateTime? customStart, customEnd;
+
+  Future<void> pickCustomDateRange() async {
+    DateTimeRange? picked = await showDateRangePicker(
+      context: Get.context!,
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null) {
+      customStart = picked.start;
+      customEnd = picked.end;
+    } else {
+      customStart = null;
+      customEnd = null;
+    }
+  }
+
+  void setDateRange(String val) {
+    final now = DateTime.now();
+
+    switch (val) {
+      case "Today":
+        customStart = now;
+        customEnd = now;
+        break;
+
+      case "Yesterday":
+        customStart = now.subtract(Duration(days: 1));
+        customEnd = now.subtract(Duration(days: 1));
+        break;
+
+      case "This Week":
+        final firstDayOfWeek = now.subtract(
+          Duration(days: now.weekday - 1),
+        ); // Monday
+        final lastDayOfWeek = firstDayOfWeek.add(Duration(days: 6));
+        customStart = firstDayOfWeek;
+        customEnd = lastDayOfWeek;
+        break;
+
+      case "This Month":
+        final firstDayOfMonth = DateTime(now.year, now.month, 1);
+        final lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
+        customStart = firstDayOfMonth;
+        customEnd = lastDayOfMonth;
+        break;
+
+      case "Custom":
+        // keep existing pickCustomDateRange() logic
+        break;
+      default:
+        // If nothing selected, keep blank
+        customStart = null;
+        customEnd = null;
+    }
+  }
+
+  void resetFilters() {
+    // applyFilters();
+    selectedDateRange.value = null;
+    selectedStatus.value = null;
+    customStart = null;
+    customEnd = null;
+    Get.back();
+    applyFilters();
+  }
+
+  void applyFilters() async {
+    Get.back();
+    await getTaskInitial();
   }
 }
 

@@ -1,35 +1,28 @@
-import 'package:dropdown_search/dropdown_search.dart';
 import '../../../utils/exported_path.dart';
 
-class ComplaintFilter extends StatefulWidget {
-  const ComplaintFilter({super.key});
+class TaskFilter extends StatefulWidget {
+  const TaskFilter({super.key});
 
   @override
-  State<ComplaintFilter> createState() => _ComplaintFilterState();
+  State<TaskFilter> createState() => _TaskFilterState();
 }
 
-class _ComplaintFilterState extends State<ComplaintFilter> {
-  final controller = getIt<ComplaintController>();
+class _TaskFilterState extends State<TaskFilter> {
+  final controller = getIt<TaskController>();
 
-  @override
-  void initState() {
-    controller.loadInitialData();
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      return ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: Get.height * 0.8.h),
+      return SizedBox(
         child: Container(
-          padding: EdgeInsets.all(16),
+          padding: EdgeInsets.all(16.r),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
           ),
           child:
-              controller.mainLoader.isTrue
+              controller.isStatusLoading.isTrue
                   ? LoadingWidget(color: primaryColor)
                   : SingleChildScrollView(
                     child: Column(
@@ -39,7 +32,7 @@ class _ComplaintFilterState extends State<ComplaintFilter> {
                         /// Department Filter
 
                         // _buildDepartment(),
-                        multiSelectionItem(),
+                        // multiSelectionItem(),
 
                         /// Date Range
                         _buildDateRange(),
@@ -47,11 +40,8 @@ class _ComplaintFilterState extends State<ComplaintFilter> {
                         /// Complaint Status
                         _buildStatus(),
 
-                        // /// Complaint Type
+                        /// Complaint Type
                         // _buildComplaintType(),
-
-                        /// Complaint Source
-                        _buildSource(),
 
                         /// Apply / Reset
                         _buildButtons(),
@@ -112,18 +102,6 @@ class _ComplaintFilterState extends State<ComplaintFilter> {
     );
   }
 
-  Widget _buildSource() {
-    return AppDropdownField(
-      isDynamic: true,
-      title: 'Source',
-      value: controller.selectedSource.value,
-      items: controller.sourceList,
-      hintText: 'Select Source',
-      validator: (value) => value == null ? 'Please select Source' : null,
-      onChanged: (val) => controller.selectedSource.value = val!,
-    );
-  }
-
   Widget _buildButtons() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -161,55 +139,4 @@ class _ComplaintFilterState extends State<ComplaintFilter> {
       ],
     );
   }
-
-  Widget multiSelectionItem() {
-    return Column(
-      children: [
-        Padding(
-          padding: EdgeInsets.only(left: 8.0, bottom: 6),
-          child: buildLabel('Department'),
-        ),
-        DropdownSearch<String>.multiSelection(
-          decoratorProps: DropDownDecoratorProps(
-            decoration: InputDecoration(
-              fillColor: Colors.white,
-              filled: true,
-              border: buildOutlineInputBorder(),
-              enabledBorder: buildOutlineInputBorder(),
-              focusedBorder: buildOutlineInputBorder(),
-              contentPadding: const EdgeInsets.all(12),
-              hintText: 'Select department',
-              hintStyle: const TextStyle(
-                color: Colors.grey,
-                fontWeight: FontWeight.normal,
-              ),
-            ),
-          ),
-          items: (filter, infiniteScrollProps) =>
-              controller.departments.map((item) => item['name'].toString()).toList(),
-          selectedItems: controller.selectedDepartmentName.cast<String>(),
-
-          popupProps: PopupPropsMultiSelection.menu(
-            menuProps: MenuProps(
-              backgroundColor: Colors.white,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            constraints: const BoxConstraints(maxHeight: 300),
-          ),
-          onChanged: (List<String> selectedItems) {
-            // Map selected names back to their IDs
-            final selectedIds = controller.departments
-                .where((item) => selectedItems.contains(item['name']))
-                .map((item) => item['id'].toString())
-                .toList();
-
-            // Store in controller
-            controller.selectedDepartmentIds.value = selectedIds;
-            controller.selectedDepartmentName.value = selectedItems;
-          },
-        ),
-      ],
-    );
-  }
-
 }

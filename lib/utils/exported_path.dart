@@ -51,6 +51,9 @@ export 'package:chakan_team/common/notification_service.dart';
 export 'package:chakan_team/view/home/widget/file_card.dart';
 export 'package:chakan_team/view/home/widget/update_file.dart';
 export 'package:chakan_team/view/dashboard/widget/dashboard_stats_card.dart';
+export 'package:chakan_team/component/error_box.dart';
+export 'package:chakan_team/view/task/widget/task_filter.dart';
+export 'package:chakan_team/view/home/widget/file_filter.dart';
 
 
 //component
@@ -112,3 +115,4 @@ export 'package:widget_zoom/widget_zoom.dart';
 export 'package:url_launcher/url_launcher_string.dart';
 export 'package:package_info_plus/package_info_plus.dart';
 export 'package:icons_plus/icons_plus.dart';
+export 'package:dotted_border/dotted_border.dart';

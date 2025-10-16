@@ -76,9 +76,9 @@ class DioClient {
         // },
 
         onResponse: (response, handler) async {
-          if (kDebugMode) {
-            log('✅ Response: ${response.statusCode} → ${response.data}');
-          }
+          // if (kDebugMode) {
+          //   log('✅ Response: ${response.statusCode} → ${response.data}');
+          // }
 
           final requestPath = response.requestOptions.path;
 
@@ -107,11 +107,11 @@ class DioClient {
         },
 
         onError: (error, handler) {
-          if (kDebugMode) {
-            // debugPrint(
-            //   '❌ Dio Error [${error.response?.statusCode}] → ${error.message}',
-            // );
-          }
+          // if (kDebugMode) {
+          //   // debugPrint(
+          //   //   '❌ Dio Error [${error.response?.statusCode}] → ${error.message}',
+          //   // );
+          // }
           return handler.next(error);
         },
       ),

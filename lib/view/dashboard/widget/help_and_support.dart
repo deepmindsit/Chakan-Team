@@ -54,15 +54,15 @@ class _HelpSupportState extends State<HelpSupport> {
                 Get.to(() => const PolicyData(slug: 'privacy_policy_page'));
               },
             ),
-            _buildTile(
-              icon: HugeIcons.strokeRoundedPoliceBadge,
-              title: 'Terms & Conditions',
-              onTap: () {
-                Get.to(
-                  () => const PolicyData(slug: 'terms_and_conditions_page'),
-                );
-              },
-            ),
+            // _buildTile(
+            //   icon: HugeIcons.strokeRoundedPoliceBadge,
+            //   title: 'Terms & Conditions',
+            //   onTap: () {
+            //     Get.to(
+            //       () => const PolicyData(slug: 'terms_and_conditions_page'),
+            //     );
+            //   },
+            // ),
           ],
         ),
       ),

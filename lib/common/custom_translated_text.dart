@@ -1,7 +1,5 @@
 import 'package:chakan_team/utils/exported_path.dart';
 
-import '../utils/translate_controller.dart';
-
 class TranslatedText extends StatelessWidget {
   final String title;
   final TextStyle? style;

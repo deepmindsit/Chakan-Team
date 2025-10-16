@@ -113,7 +113,7 @@ class ComplaintCard extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        TranslatedText(
+        CustomText(
           title: "Ticket No: $ticketNo",
           color: Colors.grey,
           fontSize: 12.sp,

@@ -79,7 +79,7 @@ class _ApiService implements ApiService {
     _data.fields.add(MapEntry('user_id', userId));
     _data.fields.add(MapEntry('page_no', pageNo));
     deptIds.forEach((i) {
-      _data.fields.add(MapEntry('department', i));
+      _data.fields.add(MapEntry('department[]', i));
     });
     _data.fields.add(MapEntry('status', status));
     _data.fields.add(MapEntry('type', source));
@@ -214,12 +214,20 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<dynamic> getTask(String userId) async {
+  Future<dynamic> getTask(
+    String userId,
+    String pageNo,
+    String status,
+    String date,
+  ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = FormData();
     _data.fields.add(MapEntry('user_id', userId));
+    _data.fields.add(MapEntry('page_no', pageNo));
+    _data.fields.add(MapEntry('status_id', status));
+    _data.fields.add(MapEntry('date', date));
     final _options = _setStreamType<dynamic>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
@@ -546,12 +554,44 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<dynamic> getFiles(String userId) async {
+  Future<dynamic> getPublicService(String userId) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = FormData();
     _data.fields.add(MapEntry('user_id', userId));
+    final _options = _setStreamType<dynamic>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'https://mychakan.com/api/team/v1/get-public-service',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch(_options);
+    final _value = _result.data;
+    return _value;
+  }
+
+  @override
+  Future<dynamic> getFiles(
+    String userId,
+    String pageNo,
+    String status,
+    String date,
+    String fileTypeId,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    _data.fields.add(MapEntry('user_id', userId));
+    _data.fields.add(MapEntry('page_no', pageNo));
+    _data.fields.add(MapEntry('status', status));
+    _data.fields.add(MapEntry('date', date));
+    _data.fields.add(MapEntry('public_service_id', fileTypeId));
     final _options = _setStreamType<dynamic>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(

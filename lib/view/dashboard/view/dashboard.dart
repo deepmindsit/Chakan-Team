@@ -138,8 +138,8 @@ class _DashboardPageState extends State<DashboardPage> {
       ),
       DashboardCard(
         icon: HugeIcons.strokeRoundedTimeSchedule,
-        title: "Pending Tasks",
-        value: controller.dashboardData['pending_tasks']?.toString() ?? '',
+        title: "Open Tasks",
+        value: controller.dashboardData['open_tasks']?.toString() ?? '',
         percentage: "+15%",
         iconColor: primaryColor,
         updateDate: "20 July 2024",
@@ -170,8 +170,8 @@ class _DashboardPageState extends State<DashboardPage> {
       ),
       DashboardCard(
         icon: HugeIcons.strokeRoundedTimeSchedule,
-        title: "Pending Files",
-        value: controller.dashboardData['pending_files']?.toString() ?? '',
+        title: "Initialized Files",
+        value: controller.dashboardData['initialized_files']?.toString() ?? '',
         percentage: "+15%",
         iconColor: primaryColor,
         updateDate: "20 July 2024",
@@ -526,15 +526,22 @@ class _DashboardPageState extends State<DashboardPage> {
       controller.dashboardData['total_files']?.toString() ?? '0',
     );
 
+    final int initialized = int.parse(
+      controller.dashboardData['initialized_files']?.toString() ?? '0',
+    );
+
+    final int hold = int.parse(
+      controller.dashboardData['hold_files']?.toString() ?? '0',
+    );
+
+    final int inprogress = int.parse(
+      controller.dashboardData['inprogress_files']?.toString() ?? '0',
+    );
+
     final int completed = int.parse(
       controller.dashboardData['completed_files']?.toString() ?? '0',
     );
-    final int inProgress = int.parse(
-      controller.dashboardData['hold_files']?.toString() ?? '0',
-    );
-    final int pending = int.parse(
-      controller.dashboardData['pending_files']?.toString() ?? '0',
-    );
+
     final int rejected = int.parse(
       controller.dashboardData['rejected_files']?.toString() ?? '0',
     );
@@ -568,7 +575,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 size: 22.sp,
               ),
               SizedBox(width: 8.w),
-              CustomText(
+              TranslatedText(
                 title: "Files Summary",
                 fontSize: 20.sp,
                 fontWeight: FontWeight.w700,
@@ -590,6 +597,42 @@ class _DashboardPageState extends State<DashboardPage> {
                       borderData: FlBorderData(show: false),
                       sections: [
                         PieChartSectionData(
+                          value: initialized.toDouble(),
+                          radius: 26.r,
+                          color: Colors.grey,
+                          title: "${percent(initialized).toStringAsFixed(0)}%",
+                          titleStyle: TextStyle(
+                            fontSize: 10.sp,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+
+                        PieChartSectionData(
+                          value: hold.toDouble(),
+                          radius: 22.r,
+                          color: Colors.amberAccent,
+                          title: "${percent(hold).toStringAsFixed(0)}%",
+                          titleStyle: TextStyle(
+                            fontSize: 10.sp,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+
+                        PieChartSectionData(
+                          value: inprogress.toDouble(),
+                          radius: 22.r,
+                          color: Colors.blueAccent,
+                          title: "${percent(inprogress).toStringAsFixed(0)}%",
+                          titleStyle: TextStyle(
+                            fontSize: 10.sp,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+
+                        PieChartSectionData(
                           value: completed.toDouble(),
                           radius: 28.r,
                           color: Colors.green,
@@ -600,32 +643,11 @@ class _DashboardPageState extends State<DashboardPage> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        PieChartSectionData(
-                          value: inProgress.toDouble(),
-                          radius: 26.r,
-                          color: Colors.blue,
-                          title: "${percent(inProgress).toStringAsFixed(0)}%",
-                          titleStyle: TextStyle(
-                            fontSize: 10.sp,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        PieChartSectionData(
-                          value: pending.toDouble(),
-                          radius: 24.r,
-                          color: Colors.orange,
-                          title: "${percent(pending).toStringAsFixed(0)}%",
-                          titleStyle: TextStyle(
-                            fontSize: 10.sp,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+
                         PieChartSectionData(
                           value: rejected.toDouble(),
-                          radius: 22.r,
-                          color: Colors.red,
+                          radius: 24.r,
+                          color: Colors.redAccent,
                           title: "${percent(rejected).toStringAsFixed(0)}%",
                           titleStyle: TextStyle(
                             fontSize: 10.sp,
@@ -647,6 +669,28 @@ class _DashboardPageState extends State<DashboardPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _legendItem(
+                      "Initialized",
+                      initialized,
+                      Colors.grey,
+                      percent(initialized),
+                    ),
+
+                    SizedBox(height: 12.h),
+                    _legendItem(
+                      "Hold",
+                      hold,
+                      Colors.amberAccent,
+                      percent(hold),
+                    ),
+                    SizedBox(height: 12.h),
+                    _legendItem(
+                      "In Progress",
+                      inprogress,
+                      Colors.blueAccent,
+                      percent(inprogress),
+                    ),
+                    SizedBox(height: 12.h),
+                    _legendItem(
                       "Completed",
                       completed,
                       Colors.green,
@@ -654,23 +698,9 @@ class _DashboardPageState extends State<DashboardPage> {
                     ),
                     SizedBox(height: 12.h),
                     _legendItem(
-                      "Hold",
-                      inProgress,
-                      Colors.purpleAccent,
-                      percent(inProgress),
-                    ),
-                    SizedBox(height: 12.h),
-                    _legendItem(
-                      "Pending",
-                      pending,
-                      Colors.orange,
-                      percent(pending),
-                    ),
-                    SizedBox(height: 12.h),
-                    _legendItem(
                       "Rejected",
                       rejected,
-                      Colors.red,
+                      Colors.redAccent,
                       percent(rejected),
                     ),
                   ],
@@ -687,18 +717,17 @@ class _DashboardPageState extends State<DashboardPage> {
     final int totalComplaints = int.parse(
       controller.dashboardData['total_tasks']?.toString() ?? '0',
     );
-
-    final int completed = int.parse(
-      controller.dashboardData['completed_tasks']?.toString() ?? '0',
+    final int open = int.parse(
+      controller.dashboardData['open_tasks']?.toString() ?? '0',
+    );
+    final int assigned = int.parse(
+      controller.dashboardData['assignee_tasks']?.toString() ?? '0',
     );
     final int inProgress = int.parse(
       controller.dashboardData['inprogress_tasks']?.toString() ?? '0',
     );
-    final int pending = int.parse(
-      controller.dashboardData['pending_tasks']?.toString() ?? '0',
-    );
-    final int rejected = int.parse(
-      controller.dashboardData['assignee_tasks']?.toString() ?? '0',
+    final int completed = int.parse(
+      controller.dashboardData['completed_tasks']?.toString() ?? '0',
     );
 
     // Percentages
@@ -730,7 +759,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 size: 22.sp,
               ),
               SizedBox(width: 8.w),
-              CustomText(
+              TranslatedText(
                 title: "Task Summary",
                 fontSize: 20.sp,
                 fontWeight: FontWeight.w700,
@@ -752,20 +781,33 @@ class _DashboardPageState extends State<DashboardPage> {
                       borderData: FlBorderData(show: false),
                       sections: [
                         PieChartSectionData(
-                          value: completed.toDouble(),
-                          radius: 28.r,
-                          color: Colors.green,
-                          title: "${percent(completed).toStringAsFixed(0)}%",
+                          value: open.toDouble(),
+                          radius: 24.r,
+                          color: Colors.blue,
+                          title: "${percent(open).toStringAsFixed(0)}%",
                           titleStyle: TextStyle(
                             fontSize: 10.sp,
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
+
+                        PieChartSectionData(
+                          value: assigned.toDouble(),
+                          radius: 22.r,
+                          color: Colors.orangeAccent,
+                          title: "${percent(assigned).toStringAsFixed(0)}%",
+                          titleStyle: TextStyle(
+                            fontSize: 10.sp,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+
                         PieChartSectionData(
                           value: inProgress.toDouble(),
                           radius: 26.r,
-                          color: Colors.blue,
+                          color: Colors.purpleAccent,
                           title: "${percent(inProgress).toStringAsFixed(0)}%",
                           titleStyle: TextStyle(
                             fontSize: 10.sp,
@@ -773,22 +815,12 @@ class _DashboardPageState extends State<DashboardPage> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
+
                         PieChartSectionData(
-                          value: pending.toDouble(),
-                          radius: 24.r,
-                          color: Colors.orange,
-                          title: "${percent(pending).toStringAsFixed(0)}%",
-                          titleStyle: TextStyle(
-                            fontSize: 10.sp,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        PieChartSectionData(
-                          value: rejected.toDouble(),
-                          radius: 22.r,
-                          color: Colors.red,
-                          title: "${percent(rejected).toStringAsFixed(0)}%",
+                          value: completed.toDouble(),
+                          radius: 28.r,
+                          color: Colors.green,
+                          title: "${percent(completed).toStringAsFixed(0)}%",
                           titleStyle: TextStyle(
                             fontSize: 10.sp,
                             color: Colors.white,
@@ -808,33 +840,55 @@ class _DashboardPageState extends State<DashboardPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    _legendItem("Open", open, Colors.blue, percent(open)),
+                    SizedBox(height: 12.h),
+                    _legendItem(
+                      "Assigned",
+                      assigned,
+                      Colors.orangeAccent,
+                      percent(assigned),
+                    ),
+                    SizedBox(height: 12.h),
+                    _legendItem(
+                      "In Progress",
+                      inProgress,
+                      Colors.purpleAccent,
+                      percent(inProgress),
+                    ),
+                    SizedBox(height: 12.h),
                     _legendItem(
                       "Completed",
                       completed,
                       Colors.green,
                       percent(completed),
                     ),
-                    SizedBox(height: 12.h),
-                    _legendItem(
-                      "In Progress",
-                      inProgress,
-                      Colors.blue,
-                      percent(inProgress),
-                    ),
-                    SizedBox(height: 12.h),
-                    _legendItem(
-                      "Pending",
-                      pending,
-                      Colors.orange,
-                      percent(pending),
-                    ),
-                    SizedBox(height: 12.h),
-                    _legendItem(
-                      "Rejected",
-                      rejected,
-                      Colors.red,
-                      percent(rejected),
-                    ),
+                    // _legendItem(
+                    //   "Completed",
+                    //   completed,
+                    //   Colors.green,
+                    //   percent(completed),
+                    // ),
+                    // SizedBox(height: 12.h),
+                    // _legendItem(
+                    //   "In Progress",
+                    //   inProgress,
+                    //   Colors.blue,
+                    //   percent(inProgress),
+                    // ),
+                    // SizedBox(height: 12.h),
+                    // _legendItem(
+                    //   "Pending",
+                    //   pending,
+                    //   Colors.orange,
+                    //   percent(pending),
+                    // ),
+                    // SizedBox(height: 12.h),
+                    // _legendItem(
+                    //   "Rejected",
+                    //   rejected,
+                    //   Colors.red,
+                    //   percent(rejected),
+                    // ),
                   ],
                 ),
               ),

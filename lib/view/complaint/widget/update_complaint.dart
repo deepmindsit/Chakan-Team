@@ -1,5 +1,4 @@
 import 'package:chakan_team/utils/exported_path.dart';
-import 'package:dotted_border/dotted_border.dart';
 
 class UpdateComplaint extends StatefulWidget {
   const UpdateComplaint({super.key});
@@ -37,41 +36,51 @@ class _UpdateComplaintState extends State<UpdateComplaint> {
     return Scaffold(
       backgroundColor: const Color(0xFFF4F6FA),
       appBar: CustomAppBar(title: 'Update Complaint', showBackButton: true),
-      body: Obx(
-        () =>
-            controller.isMainLoading.isTrue
-                ? LoadingWidget(color: primaryColor)
-                : SingleChildScrollView(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 20.w,
-                    vertical: 12.h,
-                  ),
-                  child: Form(
-                    key: controller.formKey,
-                    child: Column(
-                      children: [
-                        _buildLabel('Description'.tr),
-                        _buildDescriptionField(),
-                        SizedBox(height: 12.h),
-                        _buildDepartment(),
-                        SizedBox(height: 12.h),
-                        _buildWard(),
+      body: Listener(
+        behavior: HitTestBehavior.translucent,
+        onPointerDown: (_) {
+          FocusScope.of(context).unfocus();
+          controller.showDepartmentError.value = false;
+          controller.showHODError.value = false;
+          controller.showWardError.value = false;
+          controller.showFieldOfficerError.value = false;
+        },
+        child: Obx(
+          () =>
+              controller.isMainLoading.isTrue
+                  ? LoadingWidget(color: primaryColor)
+                  : SingleChildScrollView(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 20.w,
+                      vertical: 12.h,
+                    ),
+                    child: Form(
+                      key: controller.formKey,
+                      child: Column(
+                        children: [
+                          _buildLabel('Description'.tr),
+                          _buildDescriptionField(),
+                          SizedBox(height: 12.h),
+                          _buildDepartment(),
+                          SizedBox(height: 12.h),
+                          _buildWard(),
 
-                        SizedBox(height: 12.h),
-                        _buildHod(),
-                        SizedBox(height: 12.h),
-                        _buildFieldOfficer(),
-                        SizedBox(height: 12.h),
-                        _buildStatus(),
-                        SizedBox(height: 12.h),
-                        _buildLabel('Attachments'.tr),
-                        _buildUploadDocuments(),
-                        SizedBox(height: 16.h),
-                        _buildSelectedFilesWrap(),
-                      ],
+                          SizedBox(height: 12.h),
+                          _buildHod(),
+                          SizedBox(height: 12.h),
+                          _buildFieldOfficer(),
+                          SizedBox(height: 12.h),
+                          _buildStatus(),
+                          SizedBox(height: 12.h),
+                          _buildLabel('Attachments'.tr),
+                          _buildUploadDocuments(),
+                          SizedBox(height: 16.h),
+                          _buildSelectedFilesWrap(),
+                        ],
+                      ),
                     ),
                   ),
-                ),
+        ),
       ),
       bottomNavigationBar: buildUpdateButton(),
     );
@@ -88,64 +97,198 @@ class _UpdateComplaintState extends State<UpdateComplaint> {
   }
 
   Widget _buildDepartment() {
-    return AppDropdownField(
-      isDynamic: true,
-      value: controller.selectedDepartment.value,
-      title: 'Department',
-      items: controller.departmentList,
-      hintText: 'Select Department',
-      validator: (value) => value == null ? 'Please select Department' : null,
-      onChanged: (value) async {
-        controller.selectedDepartment.value = value;
-        controller.updateOfficers(value!);
-      },
+    final isBlocked = getIt<UserService>().rollId.value == '5';
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        GestureDetector(
+          onTap: () {
+            if (isBlocked) {
+              controller.showHODError.value = false;
+              controller.showFieldOfficerError.value = false;
+              controller.showDepartmentError.value = true;
+            }
+          },
+          child: AbsorbPointer(
+            absorbing: isBlocked,
+            child: AppDropdownField(
+              isDynamic: true,
+              value: controller.selectedDepartment.value,
+              title: 'Department',
+              items: controller.departmentList,
+              hintText: 'Select Department',
+              validator:
+                  (value) => value == null ? 'Please select Department' : null,
+              onChanged:
+                  getIt<UserService>().rollId.value == '5'
+                      ? null // disables dropdown
+                      : (value) async {
+                        controller.selectedDepartment.value = value;
+                        controller.updateOfficers(value!);
+                      },
+            ),
+          ),
+        ),
+        if (controller.showDepartmentError.value)
+          const ErrorMessageBox(
+            message: "You are not allowed to change the Department",
+          ),
+      ],
     );
   }
 
   Widget _buildWard() {
-    return AppDropdownField(
-      isDynamic: true,
-      title: 'Ward',
-      value:
-          controller.selectedWard.value!.isEmpty
-              ? null
-              : controller.selectedWard.value,
-      items: controller.wardList,
-      hintText: 'Select Ward',
-      validator: (value) => value == null ? 'Please select Ward' : null,
-      onChanged: (value) async {
-        controller.selectedWard.value = value;
-      },
+    final isBlocked = getIt<UserService>().rollId.value == '5';
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        GestureDetector(
+          onTap: () {
+            if (isBlocked) {
+              controller.showHODError.value = false;
+              controller.showFieldOfficerError.value = false;
+              controller.showDepartmentError.value = false;
+              controller.showWardError.value = true;
+            }
+          },
+          child: AbsorbPointer(
+            absorbing: isBlocked,
+            child: AppDropdownField(
+              isDynamic: true,
+              title: 'Ward',
+              value:
+                  controller.selectedWard.value!.isEmpty
+                      ? null
+                      : controller.selectedWard.value,
+              items: controller.wardList,
+              hintText: 'Select Ward',
+              validator: (value) => value == null ? 'Please select Ward' : null,
+              onChanged: (value) async {
+                controller.selectedWard.value = value;
+              },
+            ),
+          ),
+        ),
+        if (controller.showWardError.value)
+          const ErrorMessageBox(
+            message: "You are not allowed to change the Ward",
+          ),
+      ],
     );
   }
 
   Widget _buildHod() {
-    return AppDropdownField(
-      isDynamic: true,
-      title: 'HOD',
-      value: controller.selectedHOD.value,
-      items: controller.hodList,
-      hintText: 'Select HOD',
-      validator: (value) => value == null ? 'Please select HOD' : null,
-      onChanged: (value) async {
-        controller.selectedHOD.value = value;
-      },
-    );
+    final isBlocked = getIt<UserService>().rollId.value == '5';
+
+    return Obx(() {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          GestureDetector(
+            onTap: () {
+              if (isBlocked) {
+                controller.showHODError.value = true;
+                controller.showDepartmentError.value = false;
+                controller.showFieldOfficerError.value = false;
+                controller.showWardError.value = false;
+              }
+            },
+            child: AbsorbPointer(
+              absorbing: isBlocked,
+              child: AppDropdownField(
+                isDynamic: true,
+                title: 'HOD',
+                value: controller.selectedHOD.value,
+                items: controller.hodList,
+                hintText: 'Select HOD',
+                validator:
+                    (value) => value == null ? 'Please select HOD' : null,
+                onChanged:
+                    getIt<UserService>().rollId.value == '5'
+                        ? null // disables dropdown
+                        : (value) async {
+                          controller.selectedHOD.value = value;
+                        },
+                // onChanged: (value) async {
+                //   controller.selectedHOD.value = value;
+                // },
+              ),
+            ),
+          ),
+          if (controller.showHODError.value)
+            const ErrorMessageBox(
+              message: "You are not allowed to change the HOD",
+            ),
+        ],
+      );
+    });
+
+    // return AppDropdownField(
+    //   isDynamic: true,
+    //   title: 'HOD',
+    //   value: controller.selectedHOD.value,
+    //   items: controller.hodList,
+    //   hintText: 'Select HOD',
+    //   validator: (value) => value == null ? 'Please select HOD' : null,
+    //   onChanged: (value) async {
+    //     controller.selectedHOD.value = value;
+    //   },
+    // );
   }
 
   Widget _buildFieldOfficer() {
-    return AppDropdownField(
-      isDynamic: true,
-      title: 'Field Officer',
-      value: controller.selectedFieldOfficer.value,
-      items: controller.fieldOfficerList,
-      hintText: 'Select field officer',
-      // validator:
-      //     (value) => value == null ? 'Please select field officer' : null,
-      onChanged: (value) async {
-        controller.selectedFieldOfficer.value = value;
-      },
-    );
+    final isBlocked = getIt<UserService>().rollId.value == '5';
+    return Obx(() {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          GestureDetector(
+            onTap: () {
+              if (isBlocked) {
+                controller.showFieldOfficerError.value = true;
+                controller.showDepartmentError.value = false;
+                controller.showHODError.value = false;
+                controller.showWardError.value = false;
+              }
+            },
+            child: AbsorbPointer(
+              absorbing: isBlocked,
+              child: AppDropdownField(
+                isDynamic: true,
+                title: 'Field Officer',
+                value: controller.selectedFieldOfficer.value,
+                items: controller.fieldOfficerList,
+                hintText: 'Select field officer',
+                // validator:
+                //     (value) => value == null ? 'Please select field officer' : null,
+                onChanged: (value) async {
+                  controller.selectedFieldOfficer.value = value;
+                },
+              ),
+            ),
+          ),
+          if (controller.showFieldOfficerError.value)
+            const ErrorMessageBox(
+              message:
+                  "You are not allowed to change Field Officer. Contact HOD",
+            ),
+        ],
+      );
+    });
+
+    // return AppDropdownField(
+    //   isDynamic: true,
+    //   title: 'Field Officer',
+    //   value: controller.selectedFieldOfficer.value,
+    //   items: controller.fieldOfficerList,
+    //   hintText: 'Select field officer',
+    //   // validator:
+    //   //     (value) => value == null ? 'Please select field officer' : null,
+    //   onChanged: (value) async {
+    //     controller.selectedFieldOfficer.value = value;
+    //   },
+    // );
   }
 
   Widget _buildStatus() {
@@ -216,23 +359,23 @@ class _UpdateComplaintState extends State<UpdateComplaint> {
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
             margin: const EdgeInsets.all(16),
             child: Obx(
-                  () =>
-              controller.isLoading.isTrue
-                  ? LoadingWidget(color: primaryColor)
-                  : Column(
-                spacing: 8.h,
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Icon(HugeIcons.strokeRoundedCloudUpload),
-                  Text(
-                    'Upload Documents'.tr,
-                    style: TextStyle(
-                      decoration: TextDecoration.underline,
-                    ),
-                  ),
-                ],
-              ),
+              () =>
+                  controller.isLoading.isTrue
+                      ? LoadingWidget(color: primaryColor)
+                      : Column(
+                        spacing: 8.h,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Icon(HugeIcons.strokeRoundedCloudUpload),
+                          Text(
+                            'Upload Documents'.tr,
+                            style: TextStyle(
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                        ],
+                      ),
             ),
           ),
         ),

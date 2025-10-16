@@ -379,7 +379,7 @@ class _TaskDetailsState extends State<TaskDetails>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CustomText(
+              TranslatedText(
                 title: label,
                 fontSize: isCompact ? 12.sp : 13.sp,
                 color: Colors.grey.shade600,
