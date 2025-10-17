@@ -47,10 +47,7 @@ class AppDropdownField extends StatelessWidget {
             value: value,
             icon: const Icon(Icons.keyboard_arrow_down, color: Colors.grey),
             decoration: InputDecoration(
-              contentPadding: EdgeInsets.symmetric(
-                horizontal: 12.w,
-                vertical: 12,
-              ),
+              contentPadding: EdgeInsets.all(12.w),
               isDense: true,
               filled: true,
               fillColor: Colors.white,

@@ -60,7 +60,7 @@ class ComplaintController extends GetxController {
       }
     } catch (e) {
       showToastNormal('Something went wrong. Please try again later.');
-      debugPrint("getComplaintInitial error: $e");
+      // debugPrint("getComplaintInitial error: $e");
     } finally {
       if (showLoading) isLoading.value = false;
     }
@@ -150,8 +150,6 @@ class ComplaintController extends GetxController {
         descriptionController.text.trim(),
         attachment: docs,
       );
-      print('addComplaintComment');
-      print(res);
       if (res['common']['status'] == true) {
         showToastNormal(res['common']['message']);
         Get.back();

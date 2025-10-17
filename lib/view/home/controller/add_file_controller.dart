@@ -112,6 +112,10 @@ class AddFileController extends GetxController {
     if (showLoading) isLoading.value = true;
     page.value = 0;
     fileList.clear();
+    // print('getFilesInitial');
+    // print(getDateParam());
+    // print('selectedStatus=============>$selectedStatus');
+    // print('selectedFileType====================>$selectedFileType');
     final userId = await LocalStorage.getString('user_id') ?? '';
     try {
       final res = await _apiService.getFiles(
@@ -121,7 +125,8 @@ class AddFileController extends GetxController {
         getDateParam(),
         selectedFileType.value ?? '',
       );
-
+// print('getFilesInitial res');
+// print(res);
       if (res['common']['status'] == true) {
         fileList.value = res['data'] ?? [];
       }
