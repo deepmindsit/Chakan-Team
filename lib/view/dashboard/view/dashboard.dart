@@ -131,7 +131,7 @@ class _DashboardPageState extends State<DashboardPage> {
       DashboardCard(
         icon: Icons.task_alt,
         title: "Total Tasks",
-        value: controller.dashboardData['total_tasks']?.toString() ?? '',
+        value: controller.dashboardData['total_tasks']?.toString() ?? '0',
         percentage: "+15%",
         iconColor: primaryColor,
         updateDate: "20 July 2024",
@@ -139,7 +139,7 @@ class _DashboardPageState extends State<DashboardPage> {
       DashboardCard(
         icon: HugeIcons.strokeRoundedTimeSchedule,
         title: "Open Tasks",
-        value: controller.dashboardData['open_tasks']?.toString() ?? '',
+        value: controller.dashboardData['open_tasks']?.toString() ?? '0',
         percentage: "+15%",
         iconColor: primaryColor,
         updateDate: "20 July 2024",
@@ -147,7 +147,7 @@ class _DashboardPageState extends State<DashboardPage> {
       DashboardCard(
         icon: HugeIcons.strokeRoundedComplaint,
         title: "Total Complaints",
-        value: controller.dashboardData['total_complaints']?.toString() ?? '',
+        value: controller.dashboardData['total_complaints']?.toString() ?? '0',
         percentage: "+15%",
         iconColor: primaryColor,
         updateDate: "20 July 2024",
@@ -155,7 +155,7 @@ class _DashboardPageState extends State<DashboardPage> {
       DashboardCard(
         icon: HugeIcons.strokeRoundedTimeSchedule,
         title: "Pending Complaints",
-        value: controller.dashboardData['pending_complaints']?.toString() ?? '',
+        value: controller.dashboardData['pending_complaints']?.toString() ?? '0',
         percentage: "+15%",
         iconColor: primaryColor,
         updateDate: "20 July 2024",
@@ -163,7 +163,7 @@ class _DashboardPageState extends State<DashboardPage> {
       DashboardCard(
         icon: HugeIcons.strokeRoundedFolder01,
         title: "Total Files",
-        value: controller.dashboardData['total_files']?.toString() ?? '',
+        value: controller.dashboardData['total_files']?.toString() ?? '0',
         percentage: "+15%",
         iconColor: primaryColor,
         updateDate: "20 July 2024",
@@ -171,7 +171,7 @@ class _DashboardPageState extends State<DashboardPage> {
       DashboardCard(
         icon: HugeIcons.strokeRoundedTimeSchedule,
         title: "Initialized Files",
-        value: controller.dashboardData['initialized_files']?.toString() ?? '',
+        value: controller.dashboardData['initialized_files']?.toString() ?? '0',
         percentage: "+15%",
         iconColor: primaryColor,
         updateDate: "20 July 2024",
