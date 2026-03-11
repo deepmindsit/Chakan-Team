@@ -93,11 +93,11 @@ class _TaskFilterState extends State<TaskFilter> {
     return AppDropdownField(
       isDynamic: true,
       title: 'Status',
-      value: controller.selectedStatus.value,
+      value: controller.selectedFilterStatus.value,
       items: controller.statusList,
       hintText: 'Select Status',
       validator: (value) => value == null ? 'Please select Status' : null,
-      onChanged: (val) => controller.selectedStatus.value = val!,
+      onChanged: (val) => controller.selectedFilterStatus.value = val!,
     );
   }
 
@@ -116,7 +116,7 @@ class _TaskFilterState extends State<TaskFilter> {
                 ),
                 side: BorderSide(color: primaryColor), // outline color
               ),
-              onPressed: controller.resetFilters,
+              onPressed: () => controller.resetFilters(false),
               child: Text("Reset", style: TextStyle(color: primaryColor)),
             ),
           ),

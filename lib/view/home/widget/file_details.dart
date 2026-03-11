@@ -27,7 +27,6 @@ class _FileDetailsState extends State<FileDetails> {
       appBar: CustomAppBar(title: 'File Details', showBackButton: true),
       body: Obx(() {
         final details = controller.fileDetails;
-
         if (controller.isDetailsLoading.isTrue) {
           return LoadingWidget(color: primaryColor);
         }

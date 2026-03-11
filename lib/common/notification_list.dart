@@ -365,7 +365,7 @@ class NotificationTile extends StatelessWidget {
                               children: [
                                 // Title with read status
                                 Text(
-                                  notification['title'] ?? 'No Title',
+                                  notification['title'] ?? '-',
                                   style: TextStyle(
                                     fontSize: 15,
                                     fontWeight:
@@ -395,6 +395,11 @@ class NotificationTile extends StatelessWidget {
                                   ),
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  notification['created_on_time'] ?? '',
+                                  style: TextStyle(fontSize: 10.sp),
                                 ),
                               ],
                             ),
@@ -444,30 +449,6 @@ class NotificationTile extends StatelessWidget {
                           ),
                         ],
                       ),
-
-                      const SizedBox(height: 8),
-
-                      // Additional info or actions
-                      if (notification['type'] != null)
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade100,
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Text(
-                            notification['type'].toString().toUpperCase(),
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.grey.shade600,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                        ),
                     ],
                   ),
                 ),
@@ -496,7 +477,6 @@ class NotificationTile extends StatelessWidget {
     }
   }
 }
-
 
 // class NotificationItem {
 //   final String title;

@@ -1,5 +1,5 @@
 import 'package:chakan_team/utils/exported_path.dart';
-import '../../../utils/color.dart' as AppColors;
+import '../../../utils/color.dart' as c;
 
 class TaskScreen extends StatefulWidget {
   const TaskScreen({super.key});
@@ -14,7 +14,10 @@ class _TaskScreenState extends State<TaskScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.resetFilters();
+      final navController = getIt<NavigationController>();
+      if (!navController.fromDashboard.value) {
+        controller.resetFilters(false);
+      }
       controller.getTaskInitial();
       controller.getTaskStatus();
     });
@@ -115,7 +118,7 @@ class _TaskScreenState extends State<TaskScreen> {
     if (controller.isMoreLoading.value) {
       return Padding(
         padding: const EdgeInsets.all(8.0),
-        child: LoadingWidget(color: AppColors.primaryColor),
+        child: LoadingWidget(color: c.primaryColor),
       );
     } else if (!controller.hasNextPage.value) {
       return const Padding(

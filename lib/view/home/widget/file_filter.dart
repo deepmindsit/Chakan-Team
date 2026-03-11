@@ -66,7 +66,7 @@ class _FileFilterState extends State<FileFilter> {
       items: controller.fileTypeList,
       hintText: 'Select File Type',
       validator: (value) => value == null ? 'Please select File Type' : null,
-      onChanged: (val) => controller.selectedFileType.value = val!,
+      onChanged: (val) => controller.selectedFileType.value = val,
     );
   }
 
@@ -78,26 +78,28 @@ class _FileFilterState extends State<FileFilter> {
       hintText: 'Select Date Range',
       validator: (value) => value == null ? 'Please select Date Range' : null,
       onChanged: (val) async {
-        controller.selectedDateRange.value = val!;
+        controller.selectedDateRange.value = val;
         // if (val == "Custom") controller.pickCustomDateRange();
         if (val == "Custom") {
           controller.pickCustomDateRange();
         } else {
-          controller.setDateRange(val);
+          controller.setDateRange(val!);
         }
       },
     );
   }
 
   Widget _buildStatus() {
-    return AppDropdownField(
-      isDynamic: true,
-      title: 'Status',
-      value: controller.selectedStatus.value,
-      items: controller.statusList,
-      hintText: 'Select Status',
-      validator: (value) => value == null ? 'Please select Status' : null,
-      onChanged: (val) => controller.selectedStatus.value = val!,
+    return Obx(()=>
+       AppDropdownField(
+        isDynamic: true,
+        title: 'Status',
+        value: controller.selectedFilterStatus.value,
+        items: controller.statusList,
+        hintText: 'Select Status',
+        validator: (value) => value == null ? 'Please select Status' : null,
+        onChanged: (val) => controller.selectedFilterStatus.value = val,
+      ),
     );
   }
 
@@ -116,7 +118,7 @@ class _FileFilterState extends State<FileFilter> {
                 ),
                 side: BorderSide(color: primaryColor), // outline color
               ),
-              onPressed: controller.resetFilters,
+              onPressed: () => controller.resetFilters(false),
               child: Text("Reset", style: TextStyle(color: primaryColor)),
             ),
           ),

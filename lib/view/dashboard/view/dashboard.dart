@@ -184,7 +184,9 @@ class _DashboardPageState extends State<DashboardPage> {
                 value:
                     controller.dashboardData['total_tasks']?.toString() ?? '0',
                 iconColor: primaryColor,
-                onTap: () {},
+                onTap: () {
+                  nController.updateIndex(2, isFromDashboard: false);
+                },
               ),
               DashboardCard(
                 icon: HugeIcons.strokeRoundedTimeSchedule,
@@ -192,7 +194,10 @@ class _DashboardPageState extends State<DashboardPage> {
                 value:
                     controller.dashboardData['open_tasks']?.toString() ?? '0',
                 iconColor: primaryColor,
-                onTap: () {},
+                onTap: () {
+                  getIt<TaskController>().selectedFilterStatus.value = '1';
+                  nController.updateIndex(2, isFromDashboard: true);
+                },
               ),
               DashboardCard(
                 icon: HugeIcons.strokeRoundedComplaint,
@@ -201,7 +206,9 @@ class _DashboardPageState extends State<DashboardPage> {
                     controller.dashboardData['total_complaints']?.toString() ??
                     '0',
                 iconColor: primaryColor,
-                onTap: () {},
+                onTap: () {
+                  nController.updateIndex(3, isFromDashboard: false);
+                },
               ),
               DashboardCard(
                 icon: HugeIcons.strokeRoundedTimeSchedule,
@@ -211,7 +218,10 @@ class _DashboardPageState extends State<DashboardPage> {
                         ?.toString() ??
                     '0',
                 iconColor: primaryColor,
-                onTap: () {},
+                onTap: () {
+                  complaintController.selectedFilterStatus.value = '1';
+                  nController.updateIndex(3, isFromDashboard: true);
+                },
               ),
               DashboardCard(
                 icon: HugeIcons.strokeRoundedFolder01,
@@ -219,7 +229,9 @@ class _DashboardPageState extends State<DashboardPage> {
                 value:
                     controller.dashboardData['total_files']?.toString() ?? '0',
                 iconColor: primaryColor,
-                onTap: () {},
+                onTap: () {
+                  nController.updateIndex(1, isFromDashboard: false);
+                },
               ),
               DashboardCard(
                 icon: HugeIcons.strokeRoundedTimeSchedule,
@@ -228,7 +240,10 @@ class _DashboardPageState extends State<DashboardPage> {
                     controller.dashboardData['initialized_files']?.toString() ??
                     '0',
                 iconColor: primaryColor,
-                onTap: () {},
+                onTap: () {
+                  getIt<AddFileController>().selectedFilterStatus.value = '0';
+                  nController.updateIndex(1, isFromDashboard: true);
+                },
               ),
             ];
 

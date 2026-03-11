@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:chakan_team/utils/exported_path.dart';
 import 'package:intl/intl.dart';
 
@@ -73,6 +75,7 @@ class AddFileController extends GetxController {
   // =================== DROPDOWN VALUES ===================
   Rxn<String> selectedType = Rxn<String>();
   Rxn<String> selectedStatus = Rxn<String>();
+  Rxn<String> selectedFilterStatus = Rxn<String>();
   Rxn<String> selectedDepartment = Rxn<String>();
   Rxn<String> selectedCategory = Rxn<String>();
   Rxn<String> selectedSubCategory = Rxn<String>();
@@ -114,6 +117,7 @@ class AddFileController extends GetxController {
     fileList.clear();
     // print('getFilesInitial');
     // print(getDateParam());
+    // print('selectedFilterStatus=============>$selectedFilterStatus');
     // print('selectedStatus=============>$selectedStatus');
     // print('selectedFileType====================>$selectedFileType');
     final userId = await LocalStorage.getString('user_id') ?? '';
@@ -121,18 +125,16 @@ class AddFileController extends GetxController {
       final res = await _apiService.getFiles(
         userId,
         page.value.toString(),
-        selectedStatus.value ?? '',
+        selectedFilterStatus.value ?? '',
         getDateParam(),
         selectedFileType.value ?? '',
       );
-// print('getFilesInitial res');
-// print(res);
       if (res['common']['status'] == true) {
         fileList.value = res['data'] ?? [];
       }
     } catch (e) {
       showToastNormal('Something went wrong. Please try again later.');
-      // debugPrint("Login error: $e");
+      debugPrint("Login error: $e");
     } finally {
       if (showLoading) isLoading.value = false;
     }
@@ -147,7 +149,7 @@ class AddFileController extends GetxController {
       final res = await _apiService.getFiles(
         userId,
         page.value.toString(),
-        selectedStatus.value ?? '',
+        selectedFilterStatus.value ?? '',
         getDateParam(),
         selectedFileType.value ?? '',
       );
@@ -323,11 +325,11 @@ class AddFileController extends GetxController {
     }
   }
 
-  void resetFilters() {
+  void resetFilters(bool isHome) {
     applyFilters();
     // selectedDepartmentFilter.value = null;
     selectedDateRange.value = null;
-    selectedStatus.value = null;
+    if (!isHome) selectedFilterStatus.value = null;
     selectedFileType.value = null;
     customStart = null;
     customEnd = null;

@@ -184,15 +184,6 @@ void sendingMails(String mail) async {
 Future<void> downloadFile(String url) async {
   final fileName = Uri.parse(url).pathSegments.last;
 
-  // Notify user about download start
-  // Get.snackbar(
-  //   'File Download',
-  //   'Starting download for "$fileName"...',
-  //   snackPosition: SnackPosition.BOTTOM,
-  //   backgroundColor: Colors.white,
-  //   colorText: Colors.black,
-  // );
-
   showToastNormal('Starting download for "$fileName"...');
 
   // Start file download
@@ -201,7 +192,6 @@ Future<void> downloadFile(String url) async {
     name: fileName,
     onDownloadCompleted: (String filePath) async {
       final file = File(filePath);
-      // print(file);
       // Try to open the downloaded file
       await OpenFilex.open(file.path);
     },
@@ -402,7 +392,6 @@ void showMoreData(String desc) {
     ),
   );
 }
-
 
 Future<void> openMap(String latlng) async {
   Uri url;

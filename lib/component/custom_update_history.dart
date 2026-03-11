@@ -60,8 +60,11 @@ class UpdateHistoryList extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           CustomText(
-                            title: record['updated_by'] ?? 'Unknown user',
-                            fontSize: 14.sp,maxLines: 2,textAlign: TextAlign.start,
+                            title:
+                                '${record['updated_by'] ?? ''} (${record['comment_person_role'] ?? ''})',
+                            fontSize: 14.sp,
+                            maxLines: 2,
+                            textAlign: TextAlign.start,
                           ),
                           CustomText(
                             title:
@@ -75,9 +78,10 @@ class UpdateHistoryList extends StatelessWidget {
                     if (record['status'] != null)
                       StatusBadge(
                         status: record['status'] ?? '',
-                        color:  int.tryParse(
-                          record['status_color']?.toString() ?? '',
-                        ) ??
+                        color:
+                            int.tryParse(
+                              record['status_color']?.toString() ?? '',
+                            ) ??
                             0xFF898989,
                       ),
                   ],
@@ -203,24 +207,56 @@ class UpdateHistoryList extends StatelessWidget {
                           heroAnimationTag: 'tag $path',
                           zoomWidget: ClipRRect(
                             borderRadius: BorderRadius.circular(12),
-                            child: FadeInImage(
-                              placeholder: AssetImage(Images.fevicon),
-                              image: NetworkImage(path),
-                              imageErrorBuilder: (context, error, stackTrace) {
-                                return Image.asset(
-                                  Images.fevicon,
-                                  height: 80.w,
-                                  fit: BoxFit.contain,
-                                  width: double.infinity,
-                                );
-                              },
+                            child: Image.network(
+                              path,
                               height: 80.w,
                               width: double.infinity,
                               fit: BoxFit.contain,
-                              fadeInDuration: const Duration(milliseconds: 300),
+                              loadingBuilder: (_, child, loadingProgress) {
+                                if (loadingProgress == null) {
+                                  return child;
+                                }
+                                return SizedBox(
+                                  height: 80.w,
+                                  child: LoadingWidget(color: primaryColor),
+                                );
+                              },
+                              errorBuilder: (context, error, stackTrace) {
+                                return SizedBox(
+                                  height: 80.w,
+                                  child: Center(
+                                    child: Icon(
+                                      Icons.broken_image,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
                           ),
                         )
+                      // WidgetZoom(
+                      //   heroAnimationTag: 'tag $path',
+                      //   zoomWidget: ClipRRect(
+                      //     borderRadius: BorderRadius.circular(12),
+                      //     child: FadeInImage(
+                      //       placeholder: AssetImage(Images.fevicon),
+                      //       image: NetworkImage(path),
+                      //       imageErrorBuilder: (context, error, stackTrace) {
+                      //         return Image.asset(
+                      //           Images.fevicon,
+                      //           height: 80.w,
+                      //           fit: BoxFit.contain,
+                      //           width: double.infinity,
+                      //         );
+                      //       },
+                      //       height: 80.w,
+                      //       width: double.infinity,
+                      //       fit: BoxFit.contain,
+                      //       fadeInDuration: const Duration(milliseconds: 300),
+                      //     ),
+                      //   ),
+                      // )
                       else
                         Container(
                           height: 80.w,

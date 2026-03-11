@@ -53,25 +53,57 @@ class AttachmentPreviewList extends StatelessWidget {
                   Stack(
                     children: [
                       if (isImage)
+                        // WidgetZoom(
+                        //   heroAnimationTag: 'tag $path',
+                        //   zoomWidget: ClipRRect(
+                        //     borderRadius: BorderRadius.circular(12),
+                        //     child: FadeInImage(
+                        //       placeholder: AssetImage(Images.fevicon),
+                        //       image: NetworkImage(path),
+                        //       imageErrorBuilder: (context, error, stackTrace) {
+                        //         return Image.asset(
+                        //           Images.fevicon,
+                        //           height: 80.w,
+                        //           width: double.infinity,
+                        //           fit: BoxFit.contain,
+                        //         );
+                        //       },
+                        //       height: 80.w,
+                        //       width: double.infinity,
+                        //       fit: BoxFit.contain,
+                        //       fadeInDuration: const Duration(milliseconds: 300),
+                        //     ),
+                        //   ),
+                        // )
                         WidgetZoom(
                           heroAnimationTag: 'tag $path',
                           zoomWidget: ClipRRect(
                             borderRadius: BorderRadius.circular(12),
-                            child: FadeInImage(
-                              placeholder: AssetImage(Images.fevicon),
-                              image: NetworkImage(path),
-                              imageErrorBuilder: (context, error, stackTrace) {
-                                return Image.asset(
-                                  Images.fevicon,
-                                  height: 80.w,
-                                  width: double.infinity,
-                                  fit: BoxFit.contain,
-                                );
-                              },
+                            child: Image.network(
+                              path,
                               height: 80.w,
                               width: double.infinity,
                               fit: BoxFit.contain,
-                              fadeInDuration: const Duration(milliseconds: 300),
+                              loadingBuilder: (_, child, loadingProgress) {
+                                if (loadingProgress == null) {
+                                  return child;
+                                }
+                                return SizedBox(
+                                  height: 80.w,
+                                  child: LoadingWidget(color: primaryColor),
+                                );
+                              },
+                              errorBuilder: (context, error, stackTrace) {
+                                return SizedBox(
+                                  height: 80.w,
+                                  child: Center(
+                                    child: Icon(
+                                      Icons.broken_image,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
                           ),
                         )

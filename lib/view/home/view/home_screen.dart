@@ -15,8 +15,12 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.resetFilters();
-      // controller.getFilesInitial();
+      final navController = getIt<NavigationController>();
+      if (!navController.fromDashboard.value) {
+
+        controller.resetFilters(false);
+      }
+      controller.getFilesInitial();
     });
     super.initState();
   }
@@ -38,11 +42,11 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      floatingActionButton:
-          getIt<UserService>().rollId.value == '1' ||
-                  getIt<UserService>().rollId.value == '3'
-              ? _floatingButton()
-              : SizedBox.shrink(),
+      // floatingActionButton:
+      //     getIt<UserService>().rollId.value == '1' ||
+      //             getIt<UserService>().rollId.value == '3'
+      //         ? _floatingButton()
+      //         : SizedBox.shrink(),
       body: Obx(() {
         final file = controller.fileList;
 

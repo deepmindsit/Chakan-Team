@@ -23,6 +23,7 @@ class TaskController extends GetxController {
 
   // Form Selections
   final selectedStatus = RxnString();
+  final selectedFilterStatus = RxnString();
   final selectedPriority = RxnString();
   final selectedAssignee = RxnString();
   final selectedAssigneeName = RxnString();
@@ -73,7 +74,7 @@ class TaskController extends GetxController {
       final res = await _apiService.getTask(
         userId,
         page.value.toString(),
-        selectedStatus.value ?? '',
+        selectedFilterStatus.value ?? '',
         getDateParam(),
       );
 
@@ -97,7 +98,7 @@ class TaskController extends GetxController {
       final res = await _apiService.getTask(
         userId,
         page.value.toString(),
-        selectedStatus.value ?? '',
+        selectedFilterStatus.value ?? '',
         getDateParam(),
       );
       if (res['common']['status'] == true) {
@@ -141,6 +142,7 @@ class TaskController extends GetxController {
     final userId = await LocalStorage.getString('user_id') ?? '';
     try {
       final res = await _apiService.getTaskDetails(userId, taskId);
+
       if (res['common']['status'] == true) {
         taskDetails.value = res['data'][0] ?? {};
       }
@@ -339,10 +341,10 @@ class TaskController extends GetxController {
     }
   }
 
-  void resetFilters() {
+  void resetFilters(bool isHome) {
     // applyFilters();
     selectedDateRange.value = null;
-    selectedStatus.value = null;
+    if (!isHome) selectedFilterStatus.value = null;
     customStart = null;
     customEnd = null;
     Get.back();
