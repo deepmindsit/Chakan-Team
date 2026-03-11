@@ -81,22 +81,24 @@ class _TaskDetailsState extends State<TaskDetails>
           );
         }),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        foregroundColor: Colors.white,
-        onPressed: () {
-          Get.toNamed(
-            Routes.updateTask,
-            arguments: {'id': Get.arguments['id'].toString()},
-          );
-        },
-        backgroundColor: primaryColor,
-        elevation: 4,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        icon: Icon(Icons.edit_rounded, size: 20.w),
-        label: CustomText(
-          title: 'Update Task',
-          fontSize: 14.sp,
-          color: Colors.white,
+      floatingActionButton: SafeArea(
+        child: FloatingActionButton.extended(
+          foregroundColor: Colors.white,
+          onPressed: () {
+            Get.toNamed(
+              Routes.updateTask,
+              arguments: {'id': Get.arguments['id'].toString()},
+            );
+          },
+          backgroundColor: primaryColor,
+          elevation: 4,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          icon: Icon(Icons.edit_rounded, size: 20.w),
+          label: CustomText(
+            title: 'Update Task',
+            fontSize: 14.sp,
+            color: Colors.white,
+          ),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

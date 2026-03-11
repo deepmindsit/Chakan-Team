@@ -11,7 +11,9 @@ class CustomFilePicker {
   static Future<File?> pickCamera() async {
     final XFile? photo = await ImagePicker().pickImage(
       source: ImageSource.camera,
-      imageQuality: 50,
+      imageQuality: 40,
+      maxWidth: 800,
+      maxHeight: 800,
     );
     return photo != null ? File(photo.path) : null;
   }
@@ -19,7 +21,9 @@ class CustomFilePicker {
   static Future<File?> pickGallery() async {
     final XFile? image = await ImagePicker().pickImage(
       source: ImageSource.gallery,
-      imageQuality: 50,
+      imageQuality: 40,
+      maxWidth: 800,
+      maxHeight: 800,
     );
     return image != null ? File(image.path) : null;
   }

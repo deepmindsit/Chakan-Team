@@ -19,6 +19,7 @@ class ComplaintController extends GetxController {
   final descriptionController = TextEditingController();
   final selectedDepartment = RxnString();
   final selectedStatus = RxnString();
+  final selectedFilterStatus = RxnString();
   final selectedWard = RxnString();
   final selectedHOD = RxnString();
   final selectedFieldOfficer = RxnString();
@@ -50,7 +51,7 @@ class ComplaintController extends GetxController {
         userId,
         page.value.toString(),
         selectedDepartmentIds,
-        selectedStatus.value ?? '',
+        selectedFilterStatus.value ?? '',
         selectedSource.value ?? '',
         getDateParam(),
         getIt<TranslateController>().lang.value == 'mr' ? 'mr' : 'en',
@@ -76,7 +77,7 @@ class ComplaintController extends GetxController {
         userId,
         page.value.toString(),
         selectedDepartmentIds,
-        selectedStatus.value ?? '',
+        selectedFilterStatus.value ?? '',
         selectedSource.value ?? '',
         getDateParam(),
         getIt<TranslateController>().lang.value == 'mr' ? 'mr' : 'en',
@@ -339,6 +340,7 @@ class ComplaintController extends GetxController {
   // Complaint Source
   final sourceList =
       [
+        {"id": '', "name": "All"},
         {"id": 1, "name": "Web"},
         {"id": 2, "name": "App"},
         {"id": 3, "name": "Toll Free"},
@@ -371,6 +373,12 @@ class ComplaintController extends GetxController {
     if (picked != null) {
       customStart = picked.start;
       customEnd = picked.end;
+      // 👇 Format dates
+      String formatted =
+          "${_dateFormat.format(customStart!)} to ${_dateFormat.format(customEnd!)}";
+
+      // 👇 Update dropdown value
+      selectedDateRange.value = formatted;
     } else {
       // If user cancels, keep them null
       customStart = null;
@@ -378,11 +386,11 @@ class ComplaintController extends GetxController {
     }
   }
 
-  void resetFilters() {
+  void resetFilters(bool isHome) {
     applyFilters();
     // selectedDepartmentFilter.value = null;
     selectedDateRange.value = null;
-    selectedStatus.value = null;
+    if (!isHome) selectedFilterStatus.value = null;
     selectedSource.value = null;
     customStart = null;
     customEnd = null;

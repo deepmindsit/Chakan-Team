@@ -8,10 +8,6 @@ class FileDetails extends StatefulWidget {
 }
 
 class _FileDetailsState extends State<FileDetails> {
-  // String selectedStatus = 'Approved';
-  // final remarkController = TextEditingController();
-  // List<String> newAttachments = [];
-
   final controller = getIt<AddFileController>();
 
   @override
@@ -70,24 +66,26 @@ class _FileDetailsState extends State<FileDetails> {
   }
 
   Widget _buildUpdateFAB() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w),
-      child: FloatingActionButton.extended(
-        onPressed:
-            () => Get.bottomSheet(
-              backgroundColor: Colors.transparent,
-              isScrollControlled: true,
-              UpdateFile(id: Get.arguments['id'].toString()),
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16.w),
+        child: FloatingActionButton.extended(
+          onPressed:
+              () => Get.bottomSheet(
+                backgroundColor: Colors.transparent,
+                isScrollControlled: true,
+                UpdateFile(id: Get.arguments['id'].toString()),
+              ),
+          backgroundColor: primaryColor,
+          elevation: 4,
+          icon: Icon(Icons.edit, color: Colors.white),
+          label: Text(
+            'Update File',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 14.sp,
+              fontWeight: FontWeight.bold,
             ),
-        backgroundColor: primaryColor,
-        elevation: 4,
-        icon: Icon(Icons.edit, color: Colors.white),
-        label: Text(
-          'Update File',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 14.sp,
-            fontWeight: FontWeight.bold,
           ),
         ),
       ),

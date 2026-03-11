@@ -84,7 +84,7 @@ class _AddTaskState extends State<AddTask> {
                         selectedItem['id'].toString();
                   },
                   validator:
-                      (value) => value == null ? 'Select Assignee' : null,
+                      (value) => value == null ? 'Please select Assignee' : null,
                 ),
                 SizedBox(height: 12.h),
 

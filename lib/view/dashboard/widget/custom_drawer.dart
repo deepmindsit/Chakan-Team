@@ -150,6 +150,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
   }
 
   Widget _buildDepartment() {
+    final role = getIt<UserService>().rollId.value;
+
     return Obx(
       () => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -182,7 +184,11 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 SizedBox(width: 12),
                 Expanded(
                   child: CustomText(
-                    title: controller.userData['department']?.toString() ?? '-',
+                    title:
+                        role == '9'
+                            ? controller.userData['wards']?.toString() ?? '-'
+                            : controller.userData['department']?.toString() ??
+                                '-',
                     fontSize: 15.sp,
                     color: primaryColor,
                     textAlign: TextAlign.start,

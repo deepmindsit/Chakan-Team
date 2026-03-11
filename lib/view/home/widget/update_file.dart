@@ -169,19 +169,21 @@ class _UpdateFileState extends State<UpdateFile> {
   }
 
   Widget buildUpdateButton() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0).copyWith(bottom: 8),
-      child: CustomButton(
-        isLoading: controller.isUpdateLoading,
-        onPressed: () async {
-          if (controller.updateFormKey.currentState!.validate()) {
-            await controller.addFileComment(widget.id);
-          }
-        },
-        backgroundColor: primaryColor,
-        text: 'Update',
-        width: 0.8.sw,
-        height: 48.h,
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0).copyWith(bottom: 8),
+        child: CustomButton(
+          isLoading: controller.isUpdateLoading,
+          onPressed: () async {
+            if (controller.updateFormKey.currentState!.validate()) {
+              await controller.addFileComment(widget.id);
+            }
+          },
+          backgroundColor: primaryColor,
+          text: 'Update',
+          width: 0.8.sw,
+          height: 48.h,
+        ),
       ),
     );
   }

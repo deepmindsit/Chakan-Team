@@ -45,7 +45,6 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
       ),
       body: Obx(() {
         final complaints = controller.complaintDetails;
-
         if (controller.isDetailsLoading.isTrue) {
           return LoadingWidget(color: primaryColor);
         }
@@ -196,14 +195,33 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
         ),
         SizedBox(height: 12.h),
         CustomText(
-          title:
-              controller.complaintDetails['description']?.toString() ??
-              'No description provided',
+          title: controller.complaintDetails['description']?.toString() ?? '-',
           fontSize: 14.sp,
           textAlign: TextAlign.start,
-          maxLines: 12,
+          maxLines: 5,
         ),
+        _buildDescription(),
       ],
+    );
+  }
+
+  Widget _buildDescription() {
+    final description = controller.complaintDetails['description'] ?? '';
+    if (description.length < 150) {
+      return const SizedBox();
+    }
+
+    return GestureDetector(
+      onTap: () {
+        showMoreData(description);
+      },
+      child: const Padding(
+        padding: EdgeInsets.all(3.0),
+        child: Text(
+          'Read More',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),
+        ),
+      ),
     );
   }
 
@@ -228,28 +246,23 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
                 ),
               ],
             ),
-            GestureDetector(
-              onTap: () {
-                launchURL(
-                  'tel:${controller.complaintDetails['complainant_mobile_no']}',
-                );
-              },
-              child: Container(
-                padding: EdgeInsets.all(8.w),
-                decoration: BoxDecoration(
-                  color: Colors.grey.withValues(alpha: 0.15),
-                  shape: BoxShape.circle,
-                ),
-                child: HugeIcon(
-                  icon: Icons.call,
-                  color: primaryColor,
-                  size: 20,
-                ),
-              ),
-            ),
+            _buildLatLong(),
           ],
         ),
-        SizedBox(height: 12.h),
+        _buildComplainantField(),
+        // _buildDetailItem(
+        //   icon: HugeIcons.strokeRoundedUser02,
+        //   label: "Complainant",
+        //   value:
+        //       controller.complaintDetails['complainant_name']?.toString() ??
+        //       'N/A',
+        //   showEdit: number.isNotEmpty : false,
+        //   onEdit: () {
+        //     launchURL(
+        //       'tel:${controller.complaintDetails['field_contact_number']}',
+        //     );
+        //   },
+        // ),
         _buildDetailItem(
           icon: HugeIcons.strokeRoundedNewOffice,
           label: "Department",
@@ -260,30 +273,101 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
           label: "Ward",
           value: controller.complaintDetails['ward_name']?.toString() ?? 'N/A',
         ),
-        _buildDetailItem(
-          icon: HugeIcons.strokeRoundedUser02,
-          label: "Complainant",
-          value:
-              controller.complaintDetails['complainant_name']?.toString() ??
-              'N/A',
-        ),
-        _buildDetailItem(
-          icon: HugeIcons.strokeRoundedUserAdd02,
-          label: "HOD",
-          value: controller.complaintDetails['hod_name']?.toString() ?? 'N/A',
-        ),
-        _buildDetailItem(
-          icon: HugeIcons.strokeRoundedShieldUser,
-          label: "Field Officer",
-          value: controller.complaintDetails['field_name']?.toString() ?? 'N/A',
-        ),
 
+        _buildHodField(),
+        _buildFieldOfficer(),
+
+        // _buildDetailItem(
+        //   icon: HugeIcons.strokeRoundedUserAdd02,
+        //   label: "HOD",
+        //   value: controller.complaintDetails['hod_name']?.toString() ?? 'N/A',
+        // ),
+        // _buildDetailItem(
+        //   icon: HugeIcons.strokeRoundedShieldUser,
+        //   label: "Field Officer",
+        //   value: controller.complaintDetails['field_name']?.toString() ?? 'N/A',
+        // ),
         _buildDetailItem(
           icon: HugeIcons.strokeRoundedShieldUser,
           label: "Source",
           value: controller.complaintDetails['source']?.toString() ?? 'N/A',
         ),
       ],
+    );
+  }
+
+  Widget _buildLatLong() {
+    final latLng = controller.complaintDetails['lat_long'].toString();
+    if (latLng.isEmpty || latLng == 'null') return SizedBox.shrink();
+    return GestureDetector(
+      onTap: () {
+        openMap(controller.complaintDetails['lat_long']);
+      },
+      child: Container(
+        padding: EdgeInsets.all(8.w),
+        decoration: BoxDecoration(
+          color: Colors.grey.withValues(alpha: 0.15),
+          shape: BoxShape.circle,
+        ),
+        child: HugeIcon(
+          icon: Icons.location_on_outlined,
+          color: primaryColor,
+          size: 20,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildComplainantField() {
+    final number =
+        controller.complaintDetails['complainant_mobile_no'].toString();
+    return _buildDetailItem(
+      icon: HugeIcons.strokeRoundedUser02,
+      label: "Complainant",
+      value: controller.complaintDetails['complainant_name']?.toString() ?? '',
+      showEdit: number.isNotEmpty,
+      onEdit: () {
+        launchURL(
+          'tel:${controller.complaintDetails['complainant_mobile_no']}',
+        );
+      },
+    );
+  }
+
+  Widget _buildHodField() {
+    final roleId = getIt<UserService>().rollId.value;
+    final number =
+        controller.complaintDetails['hod_contact_number']?.toString() ?? '';
+    return _buildDetailItem(
+      icon: HugeIcons.strokeRoundedUserAdd02,
+      label: "HOD",
+      value: controller.complaintDetails['hod_name']?.toString() ?? '',
+      showEdit:
+          roleId == '9' || roleId == '3' || roleId == '1' || roleId == '5'
+              ? number.isNotEmpty
+              : false,
+      onEdit: () {
+        launchURL('tel:${controller.complaintDetails['hod_contact_number']}');
+      },
+    );
+  }
+
+  Widget _buildFieldOfficer() {
+    final roleId = getIt<UserService>().rollId.value;
+
+    final number =
+        controller.complaintDetails['field_contact_number']?.toString() ?? '';
+    return _buildDetailItem(
+      icon: HugeIcons.strokeRoundedShieldUser,
+      label: "Field Officer",
+      value: controller.complaintDetails['field_name']?.toString() ?? 'N/A',
+      showEdit:
+          roleId == '9' || roleId == '3' || roleId == '1' || roleId == '4'
+              ? number.isNotEmpty
+              : false,
+      onEdit: () {
+        launchURL('tel:${controller.complaintDetails['field_contact_number']}');
+      },
     );
   }
 
@@ -323,9 +407,20 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
             ),
           ),
           if (showEdit)
-            IconButton(
-              icon: Icon(Icons.edit, size: 18.w, color: primaryColor),
-              onPressed: onEdit,
+            GestureDetector(
+              onTap: onEdit ?? () {},
+              child: Container(
+                padding: EdgeInsets.all(8.w),
+                decoration: BoxDecoration(
+                  color: Colors.grey.withValues(alpha: 0.15),
+                  shape: BoxShape.circle,
+                ),
+                child: HugeIcon(
+                  icon: Icons.call,
+                  color: primaryColor,
+                  size: 20,
+                ),
+              ),
             ),
         ],
       ),
@@ -372,23 +467,25 @@ class _ComplaintDetailsState extends State<ComplaintDetails> {
   }
 
   Widget _buildUpdateFAB() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w),
-      child: FloatingActionButton.extended(
-        onPressed:
-            () => Get.toNamed(
-              Routes.updateComplaint,
-              arguments: {'id': Get.arguments['id'].toString()},
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16.w),
+        child: FloatingActionButton.extended(
+          onPressed:
+              () => Get.toNamed(
+                Routes.updateComplaint,
+                arguments: {'id': Get.arguments['id'].toString()},
+              ),
+          backgroundColor: primaryColor,
+          elevation: 4,
+          icon: Icon(Icons.edit, color: Colors.white),
+          label: Text(
+            'Update Complaint',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 14.sp,
+              fontWeight: FontWeight.bold,
             ),
-        backgroundColor: primaryColor,
-        elevation: 4,
-        icon: Icon(Icons.edit, color: Colors.white),
-        label: Text(
-          'Update Complaint',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 14.sp,
-            fontWeight: FontWeight.bold,
           ),
         ),
       ),

@@ -88,6 +88,7 @@ class _UpdateComplaintState extends State<UpdateComplaint> {
 
   Widget _buildDescriptionField() {
     return buildTextField(
+      maxLines: 5,
       keyboardType: TextInputType.text,
       controller: controller.descriptionController,
       validator:
@@ -97,7 +98,10 @@ class _UpdateComplaintState extends State<UpdateComplaint> {
   }
 
   Widget _buildDepartment() {
-    final isBlocked = getIt<UserService>().rollId.value == '5';
+    final rollId = getIt<UserService>().rollId.value;
+
+    final isBlocked = rollId == '5';
+    final isDisabled = rollId == '9';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -120,7 +124,7 @@ class _UpdateComplaintState extends State<UpdateComplaint> {
               validator:
                   (value) => value == null ? 'Please select Department' : null,
               onChanged:
-                  getIt<UserService>().rollId.value == '5'
+                  (isDisabled || isBlocked)
                       ? null // disables dropdown
                       : (value) async {
                         controller.selectedDepartment.value = value;
@@ -138,8 +142,10 @@ class _UpdateComplaintState extends State<UpdateComplaint> {
   }
 
   Widget _buildWard() {
-    final isBlocked = getIt<UserService>().rollId.value == '5';
-
+    final rollId = getIt<UserService>().rollId.value;
+    final isBlocked = rollId == '5';
+    final isDisabled = rollId == '9';
+    final selectedWard = controller.selectedWard.value;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -158,15 +164,18 @@ class _UpdateComplaintState extends State<UpdateComplaint> {
               isDynamic: true,
               title: 'Ward',
               value:
-                  controller.selectedWard.value!.isEmpty
+                  (selectedWard == null || selectedWard.isEmpty)
                       ? null
                       : controller.selectedWard.value,
               items: controller.wardList,
               hintText: 'Select Ward',
               validator: (value) => value == null ? 'Please select Ward' : null,
-              onChanged: (value) async {
-                controller.selectedWard.value = value;
-              },
+              onChanged:
+                  (isDisabled || isBlocked)
+                      ? null
+                      : (value) async {
+                        controller.selectedWard.value = value;
+                      },
             ),
           ),
         ),
@@ -179,7 +188,10 @@ class _UpdateComplaintState extends State<UpdateComplaint> {
   }
 
   Widget _buildHod() {
-    final isBlocked = getIt<UserService>().rollId.value == '5';
+    final rollId = getIt<UserService>().rollId.value;
+
+    final isBlocked = rollId == '5';
+    final isDisabled = rollId == '9';
 
     return Obx(() {
       return Column(
@@ -205,7 +217,7 @@ class _UpdateComplaintState extends State<UpdateComplaint> {
                 validator:
                     (value) => value == null ? 'Please select HOD' : null,
                 onChanged:
-                    getIt<UserService>().rollId.value == '5'
+                    (isDisabled || isBlocked)
                         ? null // disables dropdown
                         : (value) async {
                           controller.selectedHOD.value = value;
@@ -238,7 +250,10 @@ class _UpdateComplaintState extends State<UpdateComplaint> {
   }
 
   Widget _buildFieldOfficer() {
-    final isBlocked = getIt<UserService>().rollId.value == '5';
+    final rollId = getIt<UserService>().rollId.value;
+
+    final isBlocked = rollId == '5';
+    final isDisabled = rollId == '9';
     return Obx(() {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -262,9 +277,12 @@ class _UpdateComplaintState extends State<UpdateComplaint> {
                 hintText: 'Select field officer',
                 // validator:
                 //     (value) => value == null ? 'Please select field officer' : null,
-                onChanged: (value) async {
-                  controller.selectedFieldOfficer.value = value;
-                },
+                onChanged:
+                    (isDisabled || isBlocked)
+                        ? null
+                        : (value) async {
+                          controller.selectedFieldOfficer.value = value;
+                        },
               ),
             ),
           ),
@@ -292,6 +310,8 @@ class _UpdateComplaintState extends State<UpdateComplaint> {
   }
 
   Widget _buildStatus() {
+    final rollId = getIt<UserService>().rollId.value;
+    final isDisabled = rollId == '9';
     return AppDropdownField(
       isDynamic: true,
       title: 'Status',
@@ -299,9 +319,12 @@ class _UpdateComplaintState extends State<UpdateComplaint> {
       items: controller.statusList,
       hintText: 'Select Status',
       validator: (value) => value == null ? 'Please select Status' : null,
-      onChanged: (value) async {
-        controller.selectedStatus.value = value.toString();
-      },
+      onChanged:
+          (isDisabled)
+              ? null
+              : (value) async {
+                controller.selectedStatus.value = value;
+              },
     );
   }
 
@@ -331,10 +354,10 @@ class _UpdateComplaintState extends State<UpdateComplaint> {
   //     ),
   //   );
   // }
+
   Widget _buildUploadDocuments() {
     return Container(
       decoration: BoxDecoration(
-        // border: Border.all(width: 0.2),
         borderRadius: BorderRadius.circular(12),
         color: Colors.white,
       ),

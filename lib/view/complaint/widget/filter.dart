@@ -85,16 +85,31 @@ class _ComplaintFilterState extends State<ComplaintFilter> {
     return AppDropdownField(
       title: 'Date Range',
       value: controller.selectedDateRange.value,
-      items: ["Today", "Yesterday", "This Week", "This Month", "Custom"],
+      items: [
+        "Today",
+        "Yesterday",
+        "This Week",
+        "This Month",
+        "Custom",
+        if (controller.selectedDateRange.value != null &&
+            ![
+              "Today",
+              "Yesterday",
+              "This Week",
+              "This Month",
+              "Custom",
+            ].contains(controller.selectedDateRange.value))
+          controller.selectedDateRange.value!,
+      ],
       hintText: 'Select Date Range',
       validator: (value) => value == null ? 'Please select Date Range' : null,
       onChanged: (val) async {
-        controller.selectedDateRange.value = val!;
+        controller.selectedDateRange.value = val;
         // if (val == "Custom") controller.pickCustomDateRange();
         if (val == "Custom") {
           controller.pickCustomDateRange();
         } else {
-          controller.setDateRange(val);
+          controller.setDateRange(val!);
         }
       },
     );
@@ -104,11 +119,11 @@ class _ComplaintFilterState extends State<ComplaintFilter> {
     return AppDropdownField(
       isDynamic: true,
       title: 'Status',
-      value: controller.selectedStatus.value,
+      value: controller.selectedFilterStatus.value,
       items: controller.statusList,
       hintText: 'Select Status',
       validator: (value) => value == null ? 'Please select Status' : null,
-      onChanged: (val) => controller.selectedStatus.value = val!,
+      onChanged: (val) => controller.selectedFilterStatus.value = val,
     );
   }
 
@@ -120,49 +135,54 @@ class _ComplaintFilterState extends State<ComplaintFilter> {
       items: controller.sourceList,
       hintText: 'Select Source',
       validator: (value) => value == null ? 'Please select Source' : null,
-      onChanged: (val) => controller.selectedSource.value = val!,
+      onChanged: (val) => controller.selectedSource.value = val,
     );
   }
 
   Widget _buildButtons() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        // Reset -> OutlinedButton
-        Expanded(
-          child: OutlinedButton(
-            style: OutlinedButton.styleFrom(
-              padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 12.h),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.r),
+    return SafeArea(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          // Reset -> OutlinedButton
+          Expanded(
+            child: OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 12.h),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+                side: BorderSide(color: primaryColor), // outline color
               ),
-              side: BorderSide(color: primaryColor), // outline color
+              onPressed: () => controller.resetFilters(false),
+              child: Text("Reset", style: TextStyle(color: primaryColor)),
             ),
-            onPressed: controller.resetFilters,
-            child: Text("Reset", style: TextStyle(color: primaryColor)),
           ),
-        ),
-        SizedBox(width: 12.w), // space between buttons
-        // Apply -> ElevatedButton
-        Expanded(
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: primaryColor,
-              foregroundColor: Colors.white,
-              padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 12.h),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.r),
+          SizedBox(width: 12.w), // space between buttons
+          // Apply -> ElevatedButton
+          Expanded(
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: primaryColor,
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 12.h),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
               ),
+              onPressed: controller.applyFilters,
+              child: Text("Apply"),
             ),
-            onPressed: controller.applyFilters,
-            child: Text("Apply"),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
   Widget multiSelectionItem() {
+    final roleId = getIt<UserService>().rollId.value;
+
+    if (roleId == '9') return const SizedBox.shrink();
     return Column(
       children: [
         Padding(
@@ -185,8 +205,11 @@ class _ComplaintFilterState extends State<ComplaintFilter> {
               ),
             ),
           ),
-          items: (filter, infiniteScrollProps) =>
-              controller.departments.map((item) => item['name'].toString()).toList(),
+          items:
+              (filter, infiniteScrollProps) =>
+                  controller.departments
+                      .map((item) => item['name'].toString())
+                      .toList(),
           selectedItems: controller.selectedDepartmentName.cast<String>(),
 
           popupProps: PopupPropsMultiSelection.menu(
@@ -198,10 +221,11 @@ class _ComplaintFilterState extends State<ComplaintFilter> {
           ),
           onChanged: (List<String> selectedItems) {
             // Map selected names back to their IDs
-            final selectedIds = controller.departments
-                .where((item) => selectedItems.contains(item['name']))
-                .map((item) => item['id'].toString())
-                .toList();
+            final selectedIds =
+                controller.departments
+                    .where((item) => selectedItems.contains(item['name']))
+                    .map((item) => item['id'].toString())
+                    .toList();
 
             // Store in controller
             controller.selectedDepartmentIds.value = selectedIds;
@@ -211,5 +235,4 @@ class _ComplaintFilterState extends State<ComplaintFilter> {
       ],
     );
   }
-
 }

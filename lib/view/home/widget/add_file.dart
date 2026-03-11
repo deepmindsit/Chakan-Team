@@ -148,22 +148,24 @@ class _AddFileState extends State<AddFile> {
 
   // ------------------ Submit Button ------------------ //
   Widget buildSubmitButton() {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 12),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          surfaceTintColor: Colors.white,
-          backgroundColor: primaryColor,
-          padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 12.h),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12.r),
+    return SafeArea(
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 12),
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            surfaceTintColor: Colors.white,
+            backgroundColor: primaryColor,
+            padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 12.h),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.r),
+            ),
           ),
-        ),
-        onPressed: controller.submitForm,
-        // onPressed: () => Get.offAllNamed(Routes.mainScreen),
-        child: Text(
-          'Submit',
-          style: TextStyle(fontSize: 16.sp, color: Colors.white),
+          onPressed: controller.submitForm,
+          // onPressed: () => Get.offAllNamed(Routes.mainScreen),
+          child: Text(
+            'Submit',
+            style: TextStyle(fontSize: 16.sp, color: Colors.white),
+          ),
         ),
       ),
     );

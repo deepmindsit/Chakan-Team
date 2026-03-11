@@ -10,6 +10,8 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage> {
   final controller = getIt<DashboardController>();
   final langController = getIt<TranslateController>();
+  final nController = getIt<NavigationController>();
+  final complaintController = getIt<ComplaintController>();
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -29,24 +31,22 @@ class _DashboardPageState extends State<DashboardPage> {
       appBar: _buildAppBar(),
       body: Obx(() {
         if (controller.isLoading.isTrue) {
-          // return LoadingWidget(color: primaryColor);
           return _infoGridShimmer();
         }
 
         return SingleChildScrollView(
           padding: EdgeInsets.all(16.w),
           child: Column(
+            spacing: 16.h,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // _buildSearchField(),
-              // SizedBox(height: 16.h),
               _infoGrid(),
-              SizedBox(height: 16.h),
+
               // Obx(() => _pieChartSection()),
               Obx(() => _pieChartComplaint()),
-              SizedBox(height: 16.h),
+
               Obx(() => _pieChartFiles()),
-              SizedBox(height: 16.h),
+
               Obx(() => _pieChartTask()),
             ],
           ),
@@ -104,79 +104,133 @@ class _DashboardPageState extends State<DashboardPage> {
         ),
       ),
     );
-
-    //   GestureDetector(
-    //   onTap: onTap,
-    //   child: Container(
-    //     margin: EdgeInsets.all(8.w),
-    //     decoration: BoxDecoration(
-    //       color: Colors.grey.withValues(alpha: 0.15),
-    //       shape: BoxShape.circle,
-    //     ),
-    //     padding: EdgeInsets.symmetric(horizontal: 8.w),
-    //     child: Obx(
-    //       () => Image.asset(
-    //         langController.lang.value == 'en'
-    //             ? 'assets/images/translation_english_marathi.png'
-    //             : 'assets/images/translation_marathi_english.png',
-    //         width: 0.06.sw,
-    //       ),
-    //     ),
-    //   ),
-    // );
   }
 
   Widget _infoGrid() {
-    final items = [
-      DashboardCard(
-        icon: Icons.task_alt,
-        title: "Total Tasks",
-        value: controller.dashboardData['total_tasks']?.toString() ?? '0',
-        percentage: "+15%",
-        iconColor: primaryColor,
-        updateDate: "20 July 2024",
-      ),
-      DashboardCard(
-        icon: HugeIcons.strokeRoundedTimeSchedule,
-        title: "Open Tasks",
-        value: controller.dashboardData['open_tasks']?.toString() ?? '0',
-        percentage: "+15%",
-        iconColor: primaryColor,
-        updateDate: "20 July 2024",
-      ),
-      DashboardCard(
-        icon: HugeIcons.strokeRoundedComplaint,
-        title: "Total Complaints",
-        value: controller.dashboardData['total_complaints']?.toString() ?? '0',
-        percentage: "+15%",
-        iconColor: primaryColor,
-        updateDate: "20 July 2024",
-      ),
-      DashboardCard(
-        icon: HugeIcons.strokeRoundedTimeSchedule,
-        title: "Pending Complaints",
-        value: controller.dashboardData['pending_complaints']?.toString() ?? '0',
-        percentage: "+15%",
-        iconColor: primaryColor,
-        updateDate: "20 July 2024",
-      ),
-      DashboardCard(
-        icon: HugeIcons.strokeRoundedFolder01,
-        title: "Total Files",
-        value: controller.dashboardData['total_files']?.toString() ?? '0',
-        percentage: "+15%",
-        iconColor: primaryColor,
-        updateDate: "20 July 2024",
-      ),
-      DashboardCard(
-        icon: HugeIcons.strokeRoundedTimeSchedule,
-        title: "Initialized Files",
-        value: controller.dashboardData['initialized_files']?.toString() ?? '0',
-        percentage: "+15%",
-        iconColor: primaryColor,
-        updateDate: "20 July 2024",
-      ),
-    ];
+    final role = getIt<UserService>().rollId.value;
+
+    final items =
+        role == '9'
+            ? [
+              DashboardCard(
+                icon: HugeIcons.strokeRoundedComplaint,
+                title: "Total Complaints",
+                value:
+                    controller.dashboardData['total_complaints']?.toString() ??
+                    '0',
+                iconColor: primaryColor,
+                onTap: () {
+                  nController.updateIndex(1, isFromDashboard: false);
+                },
+              ),
+              DashboardCard(
+                icon: Icons.task_alt,
+                title: "Completed Complaints",
+                value:
+                    controller.dashboardData['completed_complaints']
+                        ?.toString() ??
+                    '0',
+                iconColor: primaryColor,
+                onTap: () {
+                  complaintController.selectedFilterStatus.value = '3';
+                  nController.updateIndex(1, isFromDashboard: true);
+                },
+              ),
+              DashboardCard(
+                icon: HugeIcons.strokeRoundedProgress,
+                title: "Inprogress Complaints",
+                value:
+                    controller.dashboardData['inprogress_complaints']
+                        ?.toString() ??
+                    '0',
+                iconColor: primaryColor,
+                onTap: () {
+                  complaintController.selectedFilterStatus.value = '2';
+                  nController.updateIndex(1, isFromDashboard: true);
+                },
+              ),
+              DashboardCard(
+                icon: HugeIcons.strokeRoundedTimeSchedule,
+                title: "Pending Complaints",
+                value:
+                    controller.dashboardData['pending_complaints']
+                        ?.toString() ??
+                    '0',
+                iconColor: primaryColor,
+                onTap: () {
+                  complaintController.selectedFilterStatus.value = '1';
+                  nController.updateIndex(1, isFromDashboard: true);
+                },
+              ),
+
+              DashboardCard(
+                icon: HugeIcons.strokeRoundedCancelCircleHalfDot,
+                title: "Rejected Complaints",
+                value:
+                    controller.dashboardData['rejected_complaints']
+                        ?.toString() ??
+                    '0',
+                iconColor: primaryColor,
+                onTap: () {
+                  complaintController.selectedFilterStatus.value = '4';
+                  nController.updateIndex(1, isFromDashboard: true);
+                },
+              ),
+            ]
+            : [
+              DashboardCard(
+                icon: Icons.task_alt,
+                title: "Total Tasks",
+                value:
+                    controller.dashboardData['total_tasks']?.toString() ?? '0',
+                iconColor: primaryColor,
+                onTap: () {},
+              ),
+              DashboardCard(
+                icon: HugeIcons.strokeRoundedTimeSchedule,
+                title: "Open Tasks",
+                value:
+                    controller.dashboardData['open_tasks']?.toString() ?? '0',
+                iconColor: primaryColor,
+                onTap: () {},
+              ),
+              DashboardCard(
+                icon: HugeIcons.strokeRoundedComplaint,
+                title: "Total Complaints",
+                value:
+                    controller.dashboardData['total_complaints']?.toString() ??
+                    '0',
+                iconColor: primaryColor,
+                onTap: () {},
+              ),
+              DashboardCard(
+                icon: HugeIcons.strokeRoundedTimeSchedule,
+                title: "Pending Complaints",
+                value:
+                    controller.dashboardData['pending_complaints']
+                        ?.toString() ??
+                    '0',
+                iconColor: primaryColor,
+                onTap: () {},
+              ),
+              DashboardCard(
+                icon: HugeIcons.strokeRoundedFolder01,
+                title: "Total Files",
+                value:
+                    controller.dashboardData['total_files']?.toString() ?? '0',
+                iconColor: primaryColor,
+                onTap: () {},
+              ),
+              DashboardCard(
+                icon: HugeIcons.strokeRoundedTimeSchedule,
+                title: "Initialized Files",
+                value:
+                    controller.dashboardData['initialized_files']?.toString() ??
+                    '0',
+                iconColor: primaryColor,
+                onTap: () {},
+              ),
+            ];
 
     return LiveGrid.options(
       options: LiveOptions(
@@ -208,142 +262,6 @@ class _DashboardPageState extends State<DashboardPage> {
       physics: const NeverScrollableScrollPhysics(),
     );
   }
-
-  // Widget _pieChartSection() {
-  //   final int totalPending =
-  //       int.parse(
-  //         controller.dashboardData['pending_tasks']?.toString() ?? '0',
-  //       ) +
-  //       int.parse(
-  //         controller.dashboardData['pending_complaints']?.toString() ?? '0',
-  //       ) +
-  //       int.parse(controller.dashboardData['pending_files']?.toString() ?? '0');
-  //
-  //   final int totalItems =
-  //       int.parse(controller.dashboardData['total_tasks']?.toString() ?? '0') +
-  //       int.parse(
-  //         controller.dashboardData['total_complaints']?.toString() ?? '0',
-  //       ) +
-  //       int.parse(controller.dashboardData['total_files']?.toString() ?? '0');
-  //
-  //   final int totalCompleted = totalItems - totalPending;
-  //
-  //   final double completedPercent =
-  //       totalItems == 0 ? 0 : (totalCompleted / totalItems) * 100;
-  //   final double pendingPercent =
-  //       totalItems == 0 ? 0 : (totalPending / totalItems) * 100;
-  //
-  //   return Container(
-  //     padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.h),
-  //     decoration: BoxDecoration(
-  //       color: Colors.white,
-  //       borderRadius: BorderRadius.circular(16.r),
-  //       boxShadow: [
-  //         BoxShadow(
-  //           color: Colors.grey.withValues(alpha: 0.15),
-  //           spreadRadius: 2.r,
-  //           blurRadius: 10.r,
-  //           offset: Offset(0, 4.h),
-  //         ),
-  //       ],
-  //     ),
-  //     child: Column(
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         Row(
-  //           children: [
-  //             Icon(
-  //               HugeIcons.strokeRoundedAnalytics02,
-  //               color: primaryColor,
-  //               size: 22.sp,
-  //             ),
-  //             SizedBox(width: 8.w),
-  //             CustomText(
-  //               title: "All Summary",
-  //               fontSize: 20.sp,
-  //               fontWeight: FontWeight.w700,
-  //               color: Colors.black,
-  //             ),
-  //           ],
-  //         ),
-  //         SizedBox(height: 12.h),
-  //         Row(
-  //           children: [
-  //             Expanded(
-  //               flex: 2,
-  //               child: SizedBox(
-  //                 height: 0.2.sh,
-  //                 width: 0.2.sw,
-  //                 child: PieChart(
-  //                   PieChartData(
-  //                     centerSpaceRadius: 45.r,
-  //                     borderData: FlBorderData(show: false),
-  //                     sections: [
-  //                       PieChartSectionData(
-  //                         value: totalCompleted.toDouble(),
-  //                         radius: 23.r,
-  //                         gradient: const LinearGradient(
-  //                           colors: [Color(0xFF4CAF50), Color(0xFF81C784)],
-  //                           begin: Alignment.topCenter,
-  //                           end: Alignment.bottomCenter,
-  //                         ),
-  //                         title: "${completedPercent.toStringAsFixed(0)}%",
-  //                         titleStyle: TextStyle(
-  //                           fontSize: 10.sp,
-  //                           color: Colors.white,
-  //                           fontWeight: FontWeight.bold,
-  //                         ),
-  //                       ),
-  //                       PieChartSectionData(
-  //                         value: totalPending.toDouble(),
-  //                         radius: 24.r,
-  //                         gradient: const LinearGradient(
-  //                           colors: [Color(0xFFF44336), Color(0xFFE57373)],
-  //                           begin: Alignment.topCenter,
-  //                           end: Alignment.bottomCenter,
-  //                         ),
-  //                         title: "${pendingPercent.toStringAsFixed(0)}%",
-  //                         titleStyle: TextStyle(
-  //                           fontSize: 10.sp,
-  //                           color: Colors.white,
-  //                           fontWeight: FontWeight.bold,
-  //                         ),
-  //                       ),
-  //                     ],
-  //                   ),
-  //                   duration: const Duration(milliseconds: 800),
-  //                   curve: Curves.easeInOutCubic,
-  //                 ),
-  //               ),
-  //             ),
-  //             SizedBox(width: 12.w),
-  //             Expanded(
-  //               flex: 2,
-  //               child: Column(
-  //                 crossAxisAlignment: CrossAxisAlignment.start,
-  //                 children: [
-  //                   _legendItem(
-  //                     "Completed",
-  //                     totalCompleted,
-  //                     Colors.green,
-  //                     completedPercent,
-  //                   ),
-  //                   SizedBox(height: 20.h),
-  //                   _legendItem(
-  //                     "Pending",
-  //                     totalPending,
-  //                     Colors.red,
-  //                     pendingPercent,
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
 
   Widget _pieChartComplaint() {
     final int totalComplaints = int.parse(
@@ -522,6 +440,8 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   Widget _pieChartFiles() {
+    final role = getIt<UserService>().rollId.value;
+    if (role == '9') return SizedBox.shrink();
     final int totalComplaints = int.parse(
       controller.dashboardData['total_files']?.toString() ?? '0',
     );
@@ -714,6 +634,8 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   Widget _pieChartTask() {
+    final role = getIt<UserService>().rollId.value;
+    if (role == '9') return SizedBox.shrink();
     final int totalComplaints = int.parse(
       controller.dashboardData['total_tasks']?.toString() ?? '0',
     );

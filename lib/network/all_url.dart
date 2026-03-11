@@ -2,19 +2,6 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
 
-// class Urls {
-//   Urls._();
-//
-//   static const String _baseURL =
-//       "https://192.168.29.102/eoffice_cnp/api/team/v1";
-//   // static const String _baseURL = "https://mychakan.com/api/v1";
-//   static String login = "$_baseURL/sign-in";
-//   static String getComplaint = "$_baseURL/get-complaints";
-//   static String getComplaintDetails = "$_baseURL/get-complaint-details";
-//   // static String updateFirebaseToken = "$_baseURL/update_firebase_token";
-//   // static String privacyPolicy = "https://mychakan.com/privacy-policy";
-// }
-
 Future<http.Client> getHttpClient() async {
   final ioc =
       HttpClient()
@@ -24,8 +11,7 @@ Future<http.Client> getHttpClient() async {
 }
 
 class AllUrl {
-  // static const String baseUrl =
-  // "https://192.168.29.102/cnp_team/api/team/v1";
+  // static const String baseUrl = "https://192.168.29.37/mychakan/api/team/v1";
   // "https://beta.mychakan.com/api/team/v1";
   // static const String baseUrl =
   //     "https://team.mychakan.com/api/team/v1";

@@ -3,12 +3,12 @@ import '../../../utils/exported_path.dart';
 class NavigationScreen extends StatelessWidget {
   NavigationScreen({super.key});
 
-  // final controller = Get.put(NavigationController());
   final controller = getIt<NavigationController>();
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
+    final roleId = getIt<UserService>().rollId.value;
     return Obx(
       () => Scaffold(
         backgroundColor: Colors.white,
@@ -17,8 +17,7 @@ class NavigationScreen extends StatelessWidget {
           transitionBuilder: (child, animation) {
             return FadeTransition(opacity: animation, child: child);
           },
-          child:
-              NavigationController.widgetOptions[controller.currentIndex.value],
+          child: controller.widgetOptions[controller.currentIndex.value],
         ),
         bottomNavigationBar: Container(
           decoration: BoxDecoration(
@@ -55,34 +54,49 @@ class NavigationScreen extends StatelessWidget {
               currentIndex: controller.currentIndex.value,
               onTap: controller.updateIndex,
 
-              items: [
-                _buildNavItem(
-                  HugeIcons.strokeRoundedAnalyticsUp,
-                  'Dashboard',
-                  controller.currentIndex.value == 0,
-                ),
-                _buildNavItem(
-                  HugeIcons.strokeRoundedNewOffice,
-                  'E-Office',
-                  controller.currentIndex.value == 1,
-                ),
-                _buildNavItem(
-                  HugeIcons.strokeRoundedTaskDaily01,
-                  'Task',
-                  controller.currentIndex.value == 2,
-                ),
-                _buildNavItem(
-                  HugeIcons.strokeRoundedComplaint,
-                  'Complaint',
-                  controller.currentIndex.value == 3,
-                ),
-                _buildNavItem(
-                  HugeIcons.strokeRoundedNews,
-                  'KMS',
-                  controller.currentIndex.value == 4,
-                  iconSize: Get.width * 0.05,
-                ),
-              ],
+              items:
+                  roleId == '9'
+                      ? [
+                        _buildNavItem(
+                          HugeIcons.strokeRoundedAnalyticsUp,
+                          'Dashboard',
+                          controller.currentIndex.value == 0,
+                        ),
+
+                        _buildNavItem(
+                          HugeIcons.strokeRoundedComplaint,
+                          'Complaint',
+                          controller.currentIndex.value == 1,
+                        ),
+                      ]
+                      : [
+                        _buildNavItem(
+                          HugeIcons.strokeRoundedAnalyticsUp,
+                          'Dashboard',
+                          controller.currentIndex.value == 0,
+                        ),
+                        _buildNavItem(
+                          HugeIcons.strokeRoundedNewOffice,
+                          'E-Office',
+                          controller.currentIndex.value == 1,
+                        ),
+                        _buildNavItem(
+                          HugeIcons.strokeRoundedTaskDaily01,
+                          'Task',
+                          controller.currentIndex.value == 2,
+                        ),
+                        _buildNavItem(
+                          HugeIcons.strokeRoundedComplaint,
+                          'Complaint',
+                          controller.currentIndex.value == 3,
+                        ),
+                        _buildNavItem(
+                          HugeIcons.strokeRoundedNews,
+                          'KMS',
+                          controller.currentIndex.value == 4,
+                          iconSize: Get.width * 0.05,
+                        ),
+                      ],
             ),
           ),
         ),

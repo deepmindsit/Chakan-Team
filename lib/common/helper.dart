@@ -272,7 +272,6 @@ int daysUntilDeadline(String? deadline) {
   }
 }
 
-
 String deadlineLabel(String? deadline) {
   if (deadline == null) return "No deadline";
   try {
@@ -350,4 +349,75 @@ Widget tableCell(String text, {bool isHeader = false}) {
       ),
     ),
   );
+}
+
+void showMoreData(String desc) {
+  Get.bottomSheet(
+    isScrollControlled: true,
+    Container(
+      height: Get.height * 0.8,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      padding: const EdgeInsets.all(8),
+      child: Column(
+        children: [
+          /// 🔹 Top Header with Close Button
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  "Description",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+
+                /// ❌ Close Button
+                GestureDetector(
+                  onTap: () {
+                    Get.back();
+                  },
+                  child: const Icon(Icons.close, size: 22, color: Colors.black),
+                ),
+              ],
+            ),
+          ),
+
+          const Divider(height: 1),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: CustomText(
+                title: desc,
+                fontSize: 14.sp,
+                textAlign: TextAlign.start,
+                maxLines: 500,
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+
+Future<void> openMap(String latlng) async {
+  Uri url;
+
+  if (Platform.isIOS) {
+    /// Apple Maps
+    url = Uri.parse('https://maps.apple.com/?q=$latlng');
+  } else {
+    /// Google Maps (Android)
+    url = Uri.parse(
+      'https://www.google.com/maps/search/?api=1&query=$latlng&directionsmode=driving',
+    );
+  }
+
+  if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+    throw 'Could not launch $url';
+  }
 }

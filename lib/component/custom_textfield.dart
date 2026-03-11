@@ -20,7 +20,7 @@ Widget buildTextField({
     autovalidateMode: AutovalidateMode.onUserInteraction,
     validator: validator,
     obscureText: obscureText!,
-
+    minLines: 1,
     cursorColor: Theme.of(Get.context!).textTheme.titleSmall!.color,
     decoration: inputDecoration(
       hintText: hintText,

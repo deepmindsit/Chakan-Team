@@ -10,7 +10,6 @@ class TaskFilter extends StatefulWidget {
 class _TaskFilterState extends State<TaskFilter> {
   final controller = getIt<TaskController>();
 
-
   @override
   Widget build(BuildContext context) {
     return Obx(() {
@@ -103,40 +102,42 @@ class _TaskFilterState extends State<TaskFilter> {
   }
 
   Widget _buildButtons() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        // Reset -> OutlinedButton
-        Expanded(
-          child: OutlinedButton(
-            style: OutlinedButton.styleFrom(
-              padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 12.h),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.r),
+    return SafeArea(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          // Reset -> OutlinedButton
+          Expanded(
+            child: OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 12.h),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+                side: BorderSide(color: primaryColor), // outline color
               ),
-              side: BorderSide(color: primaryColor), // outline color
+              onPressed: controller.resetFilters,
+              child: Text("Reset", style: TextStyle(color: primaryColor)),
             ),
-            onPressed: controller.resetFilters,
-            child: Text("Reset", style: TextStyle(color: primaryColor)),
           ),
-        ),
-        SizedBox(width: 12.w), // space between buttons
-        // Apply -> ElevatedButton
-        Expanded(
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: primaryColor,
-              foregroundColor: Colors.white,
-              padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 12.h),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.r),
+          SizedBox(width: 12.w), // space between buttons
+          // Apply -> ElevatedButton
+          Expanded(
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: primaryColor,
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 12.h),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
               ),
+              onPressed: controller.applyFilters,
+              child: Text("Apply"),
             ),
-            onPressed: controller.applyFilters,
-            child: Text("Apply"),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

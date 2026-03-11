@@ -15,7 +15,10 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.resetFilters();
+      final navController = getIt<NavigationController>();
+      if (!navController.fromDashboard.value) {
+        controller.resetFilters(false);
+      }
       controller.getComplaintInitial();
     });
     super.initState();
