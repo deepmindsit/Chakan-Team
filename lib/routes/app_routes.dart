@@ -1,9 +1,12 @@
 import 'package:chakan_team/utils/exported_path.dart';
 
+import '../view/onboarding/view/register.dart';
+
 class AppRoutes {
   static final routes = [
     GetPage(name: Routes.splash, page: () => SplashScreen()),
     GetPage(name: Routes.login, page: () => LoginScreen()),
+    GetPage(name: Routes.register, page: () => RegisterScreen()),
     GetPage(name: Routes.mainScreen, page: () => NavigationScreen()),
     GetPage(name: Routes.addFile, page: () => AddFile()),
     GetPage(name: Routes.fileDetails, page: () => FileDetails()),

@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
           );
           return MediaQuery(data: newMediaQueryData, child: child!);
         },
-        title: 'Chakan NP Team',
+        title: 'Chakan Seva',
         initialBinding: InitialBindings(),
         defaultTransition: Transition.fadeIn,
         transitionDuration: const Duration(milliseconds: 300),

@@ -17,6 +17,7 @@ class AllUrl {
   //     "https://team.mychakan.com/api/team/v1";
   static const String baseUrl = "https://mychakan.com/api/team/v1";
   static const String login = '$baseUrl/sign-in';
+  static const String register = '$baseUrl/register';
   static const String getStatus = '$baseUrl/get-complaint-status';
   static const String getComplaint = '$baseUrl/get-complaints';
   static const String addComplaintComment = '$baseUrl/add-complaint-comment';

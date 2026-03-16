@@ -1,6 +1,7 @@
 import 'package:chakan_team/utils/exported_path.dart';
 import 'package:chakan_team/view/complaint/widget/filter.dart';
 import '../../../utils/color.dart' as AppColors;
+import '../widget/complaint_card_2.dart';
 
 class ComplaintScreen extends StatefulWidget {
   const ComplaintScreen({super.key});
@@ -89,7 +90,7 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
                                 Routes.complaintDetails,
                                 arguments: {'id': ticket['id'].toString()},
                               ),
-                          child: ComplaintCard(
+                          child: ComplaintCard2(
                             title: ticket['department'] ?? 'N/A',
                             location: ticket['ward']?.toString() ?? 'N/A',
                             date: ticket['created_on'] ?? 'N/A',

@@ -1,7 +1,7 @@
 import 'package:chakan_team/utils/exported_path.dart';
 
-class LoginScreen extends StatelessWidget {
-  LoginScreen({super.key});
+class RegisterScreen extends StatelessWidget {
+  RegisterScreen({super.key});
 
   final controller = getIt<OnboardingController>();
 
@@ -12,7 +12,7 @@ class LoginScreen extends StatelessWidget {
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: Form(
-          key: controller.formKey,
+          key: controller.registerFormKey,
           autovalidateMode: AutovalidateMode.onUserInteraction,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -24,7 +24,7 @@ class LoginScreen extends StatelessWidget {
               SizedBox(height: 20.h),
               Center(
                 child: CustomText(
-                  title: 'Sign In',
+                  title: 'Sign Up',
                   fontSize: 24.sp,
                   fontWeight: FontWeight.bold,
                 ),
@@ -43,6 +43,10 @@ class LoginScreen extends StatelessWidget {
               _buildLabel('Username'.tr),
               _buildEmailField(),
               SizedBox(height: 16.h),
+              _buildLabel('Mobile'.tr),
+              _buildNumberField(),
+              SizedBox(height: 16.h),
+
               _buildLabel('Password'.tr),
               _buildPasswordField(),
               SizedBox(height: 24.h),
@@ -69,11 +73,32 @@ class LoginScreen extends StatelessWidget {
         icon: HugeIcons.strokeRoundedUser,
         color: primaryGrey,
       ),
-      controller: controller.userNameController,
+      controller: controller.regUsernameController,
       keyboardType: TextInputType.text,
       validator:
           (value) => value!.trim().isEmpty ? 'Please enter username'.tr : null,
       hintText: 'Enter your username'.tr,
+    );
+  }
+
+  Widget _buildNumberField() {
+    return buildTextField(
+      prefixIcon: HugeIcon(
+        icon: HugeIcons.strokeRoundedCall02,
+        color: primaryGrey,
+      ),
+
+      controller: controller.numberController,
+      keyboardType: TextInputType.number,
+      validator: (value) {
+        if (value == null || value.trim().isEmpty) {
+          return 'Please enter your mobile number'.tr;
+        } else if (!RegExp(r'^[0-9]{10}$').hasMatch(value.trim())) {
+          return 'Please enter a valid 10-digit mobile number'.tr;
+        }
+        return null;
+      },
+      hintText: 'Enter your number'.tr,
     );
   }
 
@@ -85,7 +110,7 @@ class LoginScreen extends StatelessWidget {
           icon: HugeIcons.strokeRoundedLockPassword,
           color: primaryGrey,
         ),
-        controller: controller.passwordController,
+        controller: controller.regPasswordController,
         validator:
             (value) =>
                 value!.trim().isEmpty ? 'Please enter password'.tr : null,
@@ -121,8 +146,8 @@ class LoginScreen extends StatelessWidget {
               controller.isLoading.isTrue
                   ? null
                   : () async {
-                    if (controller.formKey.currentState!.validate()) {
-                      await controller.login();
+                    if (controller.registerFormKey.currentState!.validate()) {
+                      await controller.register();
                     }
                   },
           child:
@@ -133,7 +158,7 @@ class LoginScreen extends StatelessWidget {
                     child: LoadingWidget(color: Colors.white),
                   )
                   : Text(
-                    'Login',
+                    'Register',
                     style: TextStyle(fontSize: 16.sp, color: Colors.white),
                   ),
         ),
@@ -146,19 +171,19 @@ class LoginScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         GestureDetector(
-          onTap: () => Get.toNamed(Routes.register),
+          onTap: () => Get.offAllNamed(Routes.login),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               CustomText(
-                title: "Don’t have an account?".tr,
+                title: "Already have account?".tr,
                 fontSize: Get.width * 0.035.sp,
                 color: primaryGrey,
                 fontWeight: FontWeight.w500,
               ),
               GestureDetector(
                 child: CustomText(
-                  title: "  Sign up".tr,
+                  title: "  Login".tr,
                   fontSize: Get.width * 0.035.sp,
                   color: primaryColor,
                   fontWeight: FontWeight.w600,
@@ -177,24 +202,22 @@ class LoginScreen extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // GestureDetector(
-            //   child: CustomText(
-            //     title: "Terms & Conditions ".tr,
-            //     fontSize: Get.width * 0.035.sp,
-            //     color: primaryColor,
-            //     fontWeight: FontWeight.w500,
-            //   ),
-            //   onTap: () {
-            //     Get.to(
-            //       () => const PolicyData(slug: 'terms_and_conditions_page'),
-            //     );
-            //   },
-            // ),
-            // CustomText(
-            //   title: "and ",
-            //   fontSize: Get.width * 0.035.sp,
-            //   color: Theme.of(Get.context!).textTheme.titleMedium!.color,
-            // ),
+            GestureDetector(
+              child: CustomText(
+                title: "Terms & Conditions ".tr,
+                fontSize: Get.width * 0.035.sp,
+                color: primaryColor,
+                fontWeight: FontWeight.w500,
+              ),
+              onTap: () {
+                Get.to(() => const PolicyData(slug: 'terms-and-condition'));
+              },
+            ),
+            CustomText(
+              title: "and ",
+              fontSize: Get.width * 0.035.sp,
+              color: Theme.of(Get.context!).textTheme.titleMedium!.color,
+            ),
             GestureDetector(
               child: CustomText(
                 title: "Privacy Policy".tr,
@@ -203,7 +226,7 @@ class LoginScreen extends StatelessWidget {
                 fontWeight: FontWeight.w500,
               ),
               onTap: () {
-                Get.to(() => const PolicyData(slug: 'privacy_policy_page'));
+                Get.to(() => const PolicyData(slug: 'privacy-policy'));
                 // controller.launchPrivacyPolicyURL();
               },
             ),

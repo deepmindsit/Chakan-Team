@@ -59,7 +59,7 @@ class _DashboardPageState extends State<DashboardPage> {
     return AppBar(
       foregroundColor: Colors.white,
       backgroundColor: primaryColor,
-      title: Image.asset(Images.logoWhite, width: 0.5.sw),
+      title: Image.asset(Images.logoWhite, width: 0.35.sw),
       centerTitle: true,
       actions: [
         languageToggle(() async {

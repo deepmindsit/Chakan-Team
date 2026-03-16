@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:background_downloader/background_downloader.dart';
 import 'package:chakan_team/utils/exported_path.dart';
 import 'package:intl/intl.dart';
 import '../utils/color.dart' as app_color;
@@ -184,28 +185,29 @@ void sendingMails(String mail) async {
 Future<void> downloadFile(String url) async {
   final fileName = Uri.parse(url).pathSegments.last;
 
-  showToastNormal('Starting download for "$fileName"...');
-
-  // Start file download
-  FileDownloader.downloadFile(
+  final task = DownloadTask(
     url: url,
-    name: fileName,
-    onDownloadCompleted: (String filePath) async {
-      final file = File(filePath);
-      // Try to open the downloaded file
-      await OpenFilex.open(file.path);
-    },
-    onDownloadError: (String errorMessage) {
-      // Notify user about download failure
-      Get.snackbar(
-        'Download Failed',
-        'Could not download "$fileName". Please try again.',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.white,
-        colorText: Colors.black,
-      );
+    filename: fileName,
+    directory: 'downloads',
+  );
+
+  final result = await FileDownloader().download(
+    task,
+    onProgress: (progress) {
+      // print('Progress: ${(progress * 100).toStringAsFixed(0)}%');
     },
   );
+
+  if (result.status == TaskStatus.complete) {
+    final path = await task.filePath();
+    await OpenFilex.open(path);
+  } else {
+    Get.snackbar(
+      "Download Failed",
+      fileName,
+      snackPosition: SnackPosition.BOTTOM,
+    );
+  }
 }
 
 Color getFileTypeColor(String extension) {

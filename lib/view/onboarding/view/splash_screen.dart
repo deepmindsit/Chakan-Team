@@ -1,4 +1,5 @@
 import 'package:chakan_team/utils/exported_path.dart';
+import 'package:flutter/cupertino.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -19,13 +20,16 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> _initialize() async {
-    await _loadPreferences();
-    Future.delayed(
-      const Duration(seconds: 1),
-    ).then((value) => setState(() => controller.expanded = true));
-    bool isConnected = await InternetConnectionChecker.instance.hasConnection;
+    controller.expanded.value = true;
 
-    if (isConnected) {
+    await Future.delayed(const Duration(seconds: 2));
+
+    await _loadPreferences();
+
+    final List<ConnectivityResult> connectivityResult = await (Connectivity()
+        .checkConnectivity());
+
+    if (!connectivityResult.contains(ConnectivityResult.none)) {
       token != null
           ? Get.offAllNamed(Routes.mainScreen)
           : Get.offAllNamed(Routes.login);
@@ -34,38 +38,91 @@ class _SplashScreenState extends State<SplashScreen>
     }
   }
 
+  // Future<void> _initialize() async {
+  //   await _loadPreferences();
+  //   await Future.delayed(
+  //     const Duration(seconds: 2),
+  //   ).then((value) => setState(() => controller.expanded = true));
+  //   bool isConnected = await InternetConnectionChecker.instance.hasConnection;
+  //
+  //   if (isConnected) {
+  //     token != null
+  //         ? Get.offAllNamed(Routes.mainScreen)
+  //         : Get.offAllNamed(Routes.login);
+  //   } else {
+  //     _showNoInternetDialog();
+  //   }
+  // }
+
   Future<void> _loadPreferences() async {
     token = await LocalStorage.getString('auth_key');
   }
 
   void _showNoInternetDialog() {
-    Get.dialog(
-      AlertDialog(
-        surfaceTintColor: Colors.transparent,
-        backgroundColor: Colors.white,
-        title: const Text(
-          'No Internet Connection',
-          style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Image.asset(
-              'assets/images/no_internet_connection.png',
-              width: Get.height * 0.3,
+    if (GetPlatform.isIOS) {
+      // iOS Dialog
+      Get.dialog(
+        CupertinoAlertDialog(
+          title: const Text(
+            'No Internet Connection',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          content: Column(
+            children: [
+              SizedBox(height: 10),
+              Image.asset(
+                'assets/images/no_internet_connection.png',
+                width: Get.width * 0.5,
+              ),
+              const SizedBox(height: 10),
+              const Text('Check your Internet Connection'),
+            ],
+          ),
+          actions: [
+            CupertinoDialogAction(
+              onPressed: () => Get.offAll(() => const SplashScreen()),
+              isDefaultAction: true,
+              child: const Text(
+                'Retry',
+                style: TextStyle(color: CupertinoColors.activeBlue),
+              ),
             ),
-            const Text('Check your Internet Connection'),
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.offAll(() => const SplashScreen()),
-            style: TextButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Retry', style: TextStyle(color: Colors.white)),
+        barrierDismissible: false,
+      );
+    } else {
+      // Android Dialog
+      Get.dialog(
+        AlertDialog(
+          surfaceTintColor: Colors.transparent,
+          backgroundColor: Colors.white,
+          title: const Text(
+            'No Internet Connection',
+            style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
           ),
-        ],
-      ),
-    );
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Image.asset(
+                'assets/images/no_internet_connection.png',
+                width: Get.height * 0.3,
+              ),
+              const SizedBox(height: 10),
+              const Text('Check your Internet Connection'),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Get.offAll(() => const SplashScreen()),
+              style: TextButton.styleFrom(backgroundColor: Colors.red),
+              child: const Text('Retry', style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        ),
+        barrierDismissible: false,
+      );
+    }
   }
 
   // Future<void> _initialize() async {
@@ -95,17 +152,19 @@ class _SplashScreenState extends State<SplashScreen>
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            AnimatedCrossFade(
-              firstCurve: Curves.fastOutSlowIn,
-              crossFadeState:
-                  !controller.expanded
-                      ? CrossFadeState.showFirst
-                      : CrossFadeState.showSecond,
-              duration: controller.transitionDuration,
-              firstChild: Container(),
-              secondChild: _logoRemainder(),
-              alignment: Alignment.centerLeft,
-              sizeCurve: Curves.easeInOut,
+            Obx(()=>
+               AnimatedCrossFade(
+                firstCurve: Curves.fastOutSlowIn,
+                crossFadeState:
+                    !controller.expanded.value
+                        ? CrossFadeState.showFirst
+                        : CrossFadeState.showSecond,
+                duration: controller.transitionDuration,
+                firstChild: Container(),
+                secondChild: _logoRemainder(),
+                alignment: Alignment.centerLeft,
+                sizeCurve: Curves.easeInOut,
+              ),
             ),
           ],
         ),

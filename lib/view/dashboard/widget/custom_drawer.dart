@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+
 import '../../../utils/exported_path.dart';
 
 class CustomDrawer extends StatefulWidget {
@@ -228,37 +230,75 @@ class _CustomDrawerState extends State<CustomDrawer> {
   }
 
   void showLogoutConfirmationDialog() {
-    Get.dialog(
-      AlertDialog(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.r),
-        ),
-        title: Text(
-          'Confirm Logout'.tr,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        content: Text('Are you sure you want to logout?'.tr),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text(
-              'Cancel'.tr,
-              style: const TextStyle(color: Colors.black),
+    if (GetPlatform.isIOS) {
+      // iOS Style Dialog
+      Get.dialog(
+        CupertinoAlertDialog(
+          title: Text(
+            'Confirm Logout'.tr,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          content: Padding(
+            padding: EdgeInsets.only(top: 8.h),
+            child: Text('Are you sure you want to logout?'.tr),
+          ),
+          actions: [
+            CupertinoDialogAction(
+              onPressed: () => Get.back(),
+              child: Text(
+                'Cancel'.tr,
+                style: const TextStyle(color: Colors.black),
+              ),
             ),
+            CupertinoDialogAction(
+              isDestructiveAction: true,
+              onPressed: () async {
+                Get.back();
+                await LocalStorage.clear();
+                Get.offAllNamed(Routes.login);
+              },
+              child: Text('Logout'.tr),
+            ),
+          ],
+        ),
+        barrierDismissible: false,
+      );
+    } else {
+      // Android Style Dialog
+      Get.dialog(
+        AlertDialog(
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.r),
           ),
-          TextButton(
-            onPressed: () async {
-              Get.back();
-              await LocalStorage.clear();
-              Get.offAllNamed(Routes.login);
-            },
-            child: Text('Logout'.tr, style: const TextStyle(color: Colors.red)),
+          title: Text(
+            'Confirm Logout'.tr,
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
-        ],
-      ),
-      barrierDismissible: false,
-    );
-  }
-}
+          content: Text('Are you sure you want to logout?'.tr),
+          actions: [
+            TextButton(
+              onPressed: () => Get.back(),
+              child: Text(
+                'Cancel'.tr,
+                style: const TextStyle(color: Colors.black),
+              ),
+            ),
+            TextButton(
+              onPressed: () async {
+                Get.back();
+                await LocalStorage.clear();
+                Get.offAllNamed(Routes.login);
+              },
+              child: Text(
+                'Logout'.tr,
+                style: const TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
+        ),
+        barrierDismissible: false,
+      );
+    }
+  }}

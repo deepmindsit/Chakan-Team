@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import '../utils/exported_path.dart';
 
@@ -78,41 +79,79 @@ class DeleteAccount extends StatelessWidget {
   }
 
   void showDeleteConfirmationDialog() {
-    Get.dialog(
-      AlertDialog(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        title: Text(
-          'Confirm Deletion'.tr,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        content: Text(
-          'Are you sure you want to permanently delete your account? This action cannot be undone.'
-              .tr,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
+    if (GetPlatform.isIOS) {
+      // iOS Style Dialog
+      Get.dialog(
+        CupertinoAlertDialog(
+          title: Text(
+            'Confirm Deletion'.tr,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          content: Padding(
+            padding: const EdgeInsets.only(top: 8),
             child: Text(
-              'Cancel'.tr,
-              style: const TextStyle(color: Colors.black),
+              'Are you sure you want to permanently delete your account? This action cannot be undone.'
+                  .tr,
             ),
           ),
-          TextButton(
-            onPressed: () async {
-              Get.back();
-              await controller
-                  .deleteAccount(); // Uncomment this when implementing actual logic
-            },
-            child: Text(
-              'Yes, Delete'.tr,
-              style: const TextStyle(color: Colors.red),
+          actions: [
+            CupertinoDialogAction(
+              onPressed: () => Get.back(),
+              child: Text(
+                'Cancel'.tr,
+                style: const TextStyle(color: CupertinoColors.black),
+              ),
             ),
+            CupertinoDialogAction(
+              isDestructiveAction: true,
+              onPressed: () async {
+                Get.back();
+                await controller.deleteAccount();
+              },
+              child: Text('Yes, Delete'.tr),
+            ),
+          ],
+        ),
+        barrierDismissible: false,
+      );
+    } else {
+      // Android Style Dialog
+      Get.dialog(
+        AlertDialog(
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
           ),
-        ],
-      ),
-      barrierDismissible: false,
-    );
-  }
-}
+          title: Text(
+            'Confirm Deletion'.tr,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          content: Text(
+            'Are you sure you want to permanently delete your account? This action cannot be undone.'
+                .tr,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Get.back(),
+              child: Text(
+                'Cancel'.tr,
+                style: const TextStyle(color: Colors.black),
+              ),
+            ),
+            TextButton(
+              onPressed: () async {
+                Get.back();
+                await controller.deleteAccount();
+              },
+              child: Text(
+                'Yes, Delete'.tr,
+                style: const TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
+        ),
+        barrierDismissible: false,
+      );
+    }
+  }}
