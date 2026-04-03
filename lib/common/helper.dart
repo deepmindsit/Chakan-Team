@@ -412,3 +412,21 @@ Future<void> openMap(String latlng) async {
     throw 'Could not launch $url';
   }
 }
+Widget legend(String text, Color color) {
+  return Row(
+    spacing: 5,
+    children: [
+      Container(height: 10, width: 10, color: color),
+      TranslatedText(title: text, fontSize: 12.sp, textAlign: TextAlign.start),
+    ],
+  );
+}
+
+
+
+Color hexToColor(String hex) {
+  final buffer = StringBuffer();
+  if (hex.length == 7 || hex.length == 6) buffer.write('ff');
+  buffer.write(hex.replaceFirst('#', ''));
+  return Color(int.parse(buffer.toString(), radix: 16));
+}
