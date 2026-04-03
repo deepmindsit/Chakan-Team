@@ -12,6 +12,7 @@ class AppDropdownField extends StatelessWidget {
   final String? errorText;
   final bool? isDynamic;
   final bool? isWithColor;
+  final bool? isShowClose;
 
   const AppDropdownField({
     super.key,
@@ -26,6 +27,7 @@ class AppDropdownField extends StatelessWidget {
     this.errorText,
     this.isWithColor = false,
     this.isDynamic = false,
+    this.isShowClose = true,
   });
 
   @override
@@ -46,7 +48,7 @@ class AppDropdownField extends StatelessWidget {
             borderRadius: BorderRadius.circular(12.r),
             value: value == '' ? null : value,
             icon:
-                (value != null && value!.isNotEmpty)
+                (value != null && value!.isNotEmpty && isShowClose == true)
                     ? InkWell(
                       onTap: () => onChanged?.call(null),
                       child: const Icon(
