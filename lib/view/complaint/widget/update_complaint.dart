@@ -313,6 +313,7 @@ class _UpdateComplaintState extends State<UpdateComplaint> {
     final rollId = getIt<UserService>().rollId.value;
     final isDisabled = rollId == '9';
     return AppDropdownField(
+      isShowClose: false,
       isDynamic: true,
       title: 'Status',
       value: controller.selectedStatus.value,
@@ -327,33 +328,6 @@ class _UpdateComplaintState extends State<UpdateComplaint> {
               },
     );
   }
-
-  // Widget _buildUploadDocuments() {
-  //   return GestureDetector(
-  //     onTap: () {
-  //       CustomFilePicker.showPickerBottomSheet(
-  //         onFilePicked: (file) {
-  //           controller.newAttachments.add(file);
-  //         },
-  //       );
-  //     },
-  //     child: Container(
-  //       alignment: Alignment.center,
-  //       width: double.infinity,
-  //       height: 50,
-  //       decoration: BoxDecoration(
-  //         border: Border.all(width: 0.2),
-  //         borderRadius: BorderRadius.circular(12),
-  //         color: Colors.white,
-  //       ),
-  //       child: CustomText(
-  //         title: 'Upload Documents',
-  //         fontSize: 14,
-  //         color: primaryGrey,
-  //       ),
-  //     ),
-  //   );
-  // }
 
   Widget _buildUploadDocuments() {
     return Container(

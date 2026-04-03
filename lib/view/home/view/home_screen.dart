@@ -17,7 +17,6 @@ class _HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final navController = getIt<NavigationController>();
       if (!navController.fromDashboard.value) {
-
         controller.resetFilters(false);
       }
       controller.getFilesInitial();
@@ -290,16 +289,16 @@ class _HomeScreenState extends State<HomeScreen> {
   //   ),
   // ),
 
-  Widget _floatingButton() {
-    return FloatingActionButton(
-      backgroundColor: primaryColor,
-      mini: true,
-      elevation: 0,
-      shape: const CircleBorder(),
-      onPressed: () => Get.toNamed(Routes.addFile),
-      child: Icon(Icons.add, color: Colors.white, size: 20.sp),
-    );
-  }
+  // Widget _floatingButton() {
+  //   return FloatingActionButton(
+  //     backgroundColor: primaryColor,
+  //     mini: true,
+  //     elevation: 0,
+  //     shape: const CircleBorder(),
+  //     onPressed: () => Get.toNamed(Routes.addFile),
+  //     child: Icon(Icons.add, color: Colors.white, size: 20.sp),
+  //   );
+  // }
 
   /// 🧱 Labeled Row Tile
   Widget buildRowTile(IconData icon, String label, String? value) {

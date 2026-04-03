@@ -191,6 +191,7 @@ class _UpdateTaskState extends State<UpdateTask> {
   Widget _buildTaskStatus() {
     return AppDropdownField(
       isWithColor: true,
+      isShowClose: false,
       isDynamic: true,
       title: 'Status',
       value: controller.selectedStatus.value,

@@ -37,17 +37,25 @@ class _DashboardPageState extends State<DashboardPage> {
         return SingleChildScrollView(
           padding: EdgeInsets.all(16.w),
           child: Column(
-            spacing: 16.h,
+            // spacing: 16.h,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _infoGrid(),
-
+              SizedBox(height: 16.h),
               // Obx(() => _pieChartSection()),
               Obx(() => _pieChartComplaint()),
 
               Obx(() => _pieChartFiles()),
 
               Obx(() => _pieChartTask()),
+
+              _monthlyComplaintChart(),
+
+              _complaintTypeChart(),
+
+              _recentComplaints(),
+
+              _deadComplaints(),
             ],
           ),
         );
@@ -302,6 +310,7 @@ class _DashboardPageState extends State<DashboardPage> {
     if (totalComplaints == 0) return const SizedBox();
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.h),
+      margin: EdgeInsets.only(bottom: 16.h),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
@@ -487,6 +496,7 @@ class _DashboardPageState extends State<DashboardPage> {
     if (totalComplaints == 0) return const SizedBox();
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.h),
+      margin: EdgeInsets.only(bottom: 16.h),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
@@ -673,6 +683,7 @@ class _DashboardPageState extends State<DashboardPage> {
     if (totalComplaints == 0) return const SizedBox();
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.h),
+      margin: EdgeInsets.only(bottom: 16.h),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
@@ -836,6 +847,137 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
+  Widget _monthlyComplaintChart() {
+    if (controller.chartData.isEmpty) return const SizedBox.shrink();
+    bool isAllZero = controller.chartData.every((item) {
+      return (item["pending"] == 0) &&
+          (item["inProgress"] == 0) &&
+          (item["completed"] == 0) &&
+          (item["rejected"] == 0);
+    });
+    if (isAllZero) return const SizedBox.shrink();
+    return dashboardCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          header("Monthly Complaints", HugeIcons.strokeRoundedAnalytics02),
+          SizedBox(height: 16.h),
+
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  legend("Pending", const Color(0xffe83e8c)),
+                  legend("In Progress", const Color(0xffffc105)),
+                  legend("Completed", const Color(0xff58d8a3)),
+                  legend("Rejected", const Color(0xffFB0404)),
+                ],
+              ),
+
+              SizedBox(height: 8.w),
+
+              SizedBox(
+                height: 250.h,
+                child: Obx(
+                  () => SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Container(
+                      margin: EdgeInsets.only(top: 20.h, right: 10.w),
+                      width: controller.chartData.length * 60.w,
+                      child: BarChart(
+                        BarChartData(
+                          alignment: BarChartAlignment.spaceAround,
+                          barTouchData: BarTouchData(
+                            enabled: true,
+                            touchTooltipData: BarTouchTooltipData(
+                              fitInsideHorizontally: true,
+                              fitInsideVertically: true,
+                              tooltipBorderRadius: BorderRadius.circular(8.r),
+                              tooltipPadding: EdgeInsets.all(8),
+                              getTooltipItem: (group, _, __, ___) {
+                                final item = controller.chartData[group.x];
+
+                                return BarTooltipItem(
+                                  "${item["month"]}\n"
+                                  "Pending : ${item["pending"]}\n"
+                                  "InProgress : ${item["inProgress"]}\n"
+                                  "Completed : ${item["completed"]}\n"
+                                  "Rejected : ${item["rejected"]}",
+                                  const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                          barGroups: buildBarGroups(),
+
+                          gridData: FlGridData(
+                            show: true,
+                            drawHorizontalLine: true,
+                            drawVerticalLine: false,
+                            horizontalInterval: 2,
+                            getDrawingHorizontalLine: (value) {
+                              return FlLine(
+                                color: Colors.grey.withValues(alpha: 0.2),
+                                strokeWidth: 1,
+                              );
+                            },
+                          ),
+
+                          borderData: FlBorderData(show: false),
+                          maxY: controller.getMaxComplaintCount().toDouble(),
+                          titlesData: FlTitlesData(
+                            leftTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                reservedSize: 30,
+                              ),
+                            ),
+                            topTitles: AxisTitles(
+                              sideTitles: SideTitles(showTitles: false),
+                            ),
+                            rightTitles: AxisTitles(
+                              sideTitles: SideTitles(showTitles: false),
+                            ),
+                            bottomTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                getTitlesWidget: (value, meta) {
+                                  if (value.toInt() >=
+                                      controller.chartData.length) {
+                                    return const SizedBox();
+                                  }
+
+                                  return Padding(
+                                    padding: EdgeInsets.only(top: 6.h),
+                                    child: Text(
+                                      controller.chartData[value
+                                          .toInt()]["month"],
+                                      style: TextStyle(fontSize: 12.sp),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _legendItem(String label, int count, Color color, double percent) {
     return Row(
       children: [
@@ -859,6 +1001,7 @@ class _DashboardPageState extends State<DashboardPage> {
           child: TranslatedText(
             title: "$label ($count)",
             fontSize: 12.sp,
+            maxLines: 2,
             textAlign: TextAlign.start,
             fontWeight: FontWeight.w500,
             color: Colors.black87,
@@ -873,6 +1016,7 @@ class _DashboardPageState extends State<DashboardPage> {
           child: CustomText(
             title: "${percent.toStringAsFixed(0)}%",
             fontSize: 12.sp,
+
             color: color,
             fontWeight: FontWeight.w600,
           ),
@@ -895,137 +1039,44 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Widget _departmentWiseComplaint() {
+  Widget dashboardCard({required Widget child}) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.h),
+      padding: EdgeInsets.all(14.w),
+      margin: EdgeInsets.only(bottom: 16.h),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(14.r),
+        border: Border.all(color: Colors.grey.shade200),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.15),
-            spreadRadius: 2.r,
-            blurRadius: 10.r,
-            offset: Offset(0, 4.h),
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                HugeIcons.strokeRoundedAnalytics02,
-                color: primaryColor,
-                size: 22.sp,
-              ),
-              SizedBox(width: 8.w),
-              CustomText(
-                title: "Department Wise Complaint",
-                fontSize: 20.sp,
-                fontWeight: FontWeight.w700,
-                color: Colors.black,
-              ),
-            ],
-          ),
-          SizedBox(height: 12.h),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Table(
-              border: TableBorder.all(
-                width: 0.5,
-                color: Colors.grey,
-                borderRadius: BorderRadius.circular(8.r),
-              ),
-              defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-              columnWidths: {
-                0: IntrinsicColumnWidth(), // Department column adapts to text size
-                1: IntrinsicColumnWidth(), // Pending
-                2: IntrinsicColumnWidth(), // In Progress
-                3: IntrinsicColumnWidth(), // Complete
-                4: IntrinsicColumnWidth(), // Reject
-                5: IntrinsicColumnWidth(), // Total
-                6: IntrinsicColumnWidth(), // Total
-              },
-              children: [
-                // Header Row
-                TableRow(
-                  decoration: BoxDecoration(color: Colors.grey[300]),
-                  children: [
-                    tableCell('#', isHeader: true),
-                    tableCell('Department', isHeader: true),
-                    tableCell('Pending', isHeader: true),
-                    tableCell('In Progress', isHeader: true),
-                    tableCell('Completed', isHeader: true),
-                    tableCell('Rejected', isHeader: true),
-                    tableCell('Total', isHeader: true),
-                  ],
-                ),
-                // Data Rows
-                ...controller.data.asMap().entries.map((entry) {
-                  int index = entry.key + 1;
-                  Map<String, dynamic> dept = entry.value;
-                  int total =
-                      dept['pending'] +
-                      dept['inProgress'] +
-                      dept['complete'] +
-                      dept['reject'];
-                  return TableRow(
-                    children: [
-                      tableCell(index.toString()),
-                      tableCell(dept['department']),
-                      tableCell(dept['pending'].toString()),
-                      tableCell(dept['inProgress'].toString()),
-                      tableCell(dept['complete'].toString()),
-                      tableCell(dept['reject'].toString()),
-                      tableCell(total.toString()),
-                    ],
-                  );
-                }),
-              ],
-            ),
-          ),
-        ],
-      ),
+      child: child,
     );
   }
 
-  Widget _buildComplaintType() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.h),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.15),
-            spreadRadius: 2.r,
-            blurRadius: 10.r,
-            offset: Offset(0, 4.h),
-          ),
-        ],
-      ),
+  /////////////////////////////////////////////////////////////
+  /// COMPLAINT TYPE
+  /////////////////////////////////////////////////////////////
+
+  Widget _complaintTypeChart() {
+    if (controller.complaintTypeData.isEmpty ||
+        controller.complaintTypeData.values.every((value) => value == 0)) {
+      return const SizedBox(); // OR show "No Data"
+    }
+    final chartData = controller.complaintTypeData.entries.toList();
+    return dashboardCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(
-                HugeIcons.strokeRoundedAnalytics02,
-                color: primaryColor,
-                size: 22.sp,
-              ),
-              SizedBox(width: 8.w),
-              CustomText(
-                title: "Complaint Type",
-                fontSize: 20.sp,
-                fontWeight: FontWeight.w700,
-                color: Colors.black,
-              ),
-            ],
-          ),
-          SizedBox(height: 12.h),
+          header("Complaint Type", HugeIcons.strokeRoundedAnalytics02),
+          SizedBox(height: 14.h),
+
+          /// Your existing pie chart code
           Row(
             children: [
               Expanded(
@@ -1038,11 +1089,11 @@ class _DashboardPageState extends State<DashboardPage> {
                     curve: Curves.easeInOutCubic,
                     PieChartData(
                       sections:
-                          controller.dataMap.entries.map((entry) {
+                          chartData.map((entry) {
                             final color = getColor(entry.key);
                             return PieChartSectionData(
                               color: color,
-                              value: entry.value,
+                              value: entry.value.toDouble(),
                               title: "${entry.value.toInt()}%",
                               radius: 24.r,
                               titleStyle: TextStyle(
@@ -1065,13 +1116,13 @@ class _DashboardPageState extends State<DashboardPage> {
                   spacing: 8,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children:
-                      controller.dataMap.entries.map((entry) {
+                      chartData.map((entry) {
                         final color = getColor(entry.key);
                         return _legendItem(
                           entry.key,
                           entry.value.toInt(),
                           color,
-                          entry.value,
+                          entry.value.toDouble(),
                         );
                       }).toList(),
                 ),
@@ -1083,41 +1134,19 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Widget _buildRecentComplaints() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.h),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.15),
-            spreadRadius: 2.r,
-            blurRadius: 10.r,
-            offset: Offset(0, 4.h),
-          ),
-        ],
-      ),
+  /////////////////////////////////////////////////////////////
+  /// RECENT COMPLAINTS
+  /////////////////////////////////////////////////////////////
+
+  Widget _recentComplaints() {
+    if (controller.recentComplaints.isEmpty) return const SizedBox();
+    return dashboardCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(
-                HugeIcons.strokeRoundedAnalytics02,
-                color: primaryColor,
-                size: 22.sp,
-              ),
-              SizedBox(width: 8.w),
-              CustomText(
-                title: "Recent Complaints",
-                fontSize: 20.sp,
-                fontWeight: FontWeight.w700,
-                color: Colors.black,
-              ),
-            ],
-          ),
+          header("Recent Complaints", HugeIcons.strokeRoundedAnalytics02),
           SizedBox(height: 12.h),
+
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Table(
@@ -1145,14 +1174,60 @@ class _DashboardPageState extends State<DashboardPage> {
                   ],
                 ),
                 // Data Rows
-                ...controller.recentComplaint.asMap().entries.map((entry) {
-                  int index = entry.key + 1;
+                ...controller.recentComplaints.asMap().entries.map((entry) {
+                  // int index = entry.key + 1;
                   Map<String, dynamic> dept = entry.value;
                   return TableRow(
                     children: [
-                      tableCell('${dept['no']}$index'),
-                      tableCell(dept['dept']),
-                      tableCell(dept['status'].toString()),
+                      GestureDetector(
+                        onTap:
+                            () => Get.toNamed(
+                              Routes.complaintDetails,
+                              arguments: {'id': dept['id'].toString()},
+                            ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: Center(
+                            child: Text(
+                              dept['code']?.toString() ?? '-',
+                              style: TextStyle(color: Colors.blue),
+                            ),
+                          ),
+                        ),
+                      ),
+                      tableCell(dept['department'] ?? '-'),
+                      Row(
+                        children: [
+                          Container(
+                            width: 8.w,
+                            height: 8.h,
+                            margin: EdgeInsets.only(left: 8.w),
+                            decoration: BoxDecoration(
+                              color: hexToColor(dept['status_color']),
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: hexToColor(
+                                    dept['status_color'],
+                                  ).withValues(alpha: 0.4),
+                                  blurRadius: 4.r,
+                                  offset: Offset(0, 2.h),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: Center(
+                              child: Text(
+                                dept['status'].toString(),
+                                style: TextStyle(fontWeight: FontWeight.normal),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+
                       tableCell(dept['created_on'].toString()),
                     ],
                   );
@@ -1165,41 +1240,19 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Widget _buildDeadComplaints() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.h),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.15),
-            spreadRadius: 2.r,
-            blurRadius: 10.r,
-            offset: Offset(0, 4.h),
-          ),
-        ],
-      ),
+  /////////////////////////////////////////////////////////////
+  /// DEAD COMPLAINTS
+  /////////////////////////////////////////////////////////////
+
+  Widget _deadComplaints() {
+    if (controller.deadComplaints.isEmpty) return const SizedBox();
+    return dashboardCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(
-                HugeIcons.strokeRoundedAnalytics02,
-                color: primaryColor,
-                size: 22.sp,
-              ),
-              SizedBox(width: 8.w),
-              CustomText(
-                title: "Dead Complaints",
-                fontSize: 20.sp,
-                fontWeight: FontWeight.w700,
-                color: Colors.black,
-              ),
-            ],
-          ),
+          header("Dead Complaints", HugeIcons.strokeRoundedAnalytics02),
           SizedBox(height: 12.h),
+
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Table(
@@ -1227,14 +1280,59 @@ class _DashboardPageState extends State<DashboardPage> {
                   ],
                 ),
                 // Data Rows
-                ...controller.recentComplaint.asMap().entries.map((entry) {
-                  int index = entry.key + 1;
+                ...controller.deadComplaints.asMap().entries.map((entry) {
                   Map<String, dynamic> dept = entry.value;
                   return TableRow(
                     children: [
-                      tableCell('${dept['no']}$index'),
-                      tableCell(dept['dept']),
-                      tableCell(dept['status'].toString()),
+                      GestureDetector(
+                        onTap:
+                            () => Get.toNamed(
+                              Routes.complaintDetails,
+                              arguments: {'id': dept['id'].toString()},
+                            ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: Center(
+                            child: Text(
+                              dept['code']?.toString() ?? '-',
+                              style: TextStyle(color: Colors.blue),
+                            ),
+                          ),
+                        ),
+                      ),
+                      tableCell(dept['department'] ?? '-'),
+                      Row(
+                        children: [
+                          Container(
+                            width: 8.w,
+                            height: 8.h,
+                            margin: EdgeInsets.only(left: 8.w),
+                            decoration: BoxDecoration(
+                              color: hexToColor(dept['status_color']),
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: hexToColor(
+                                    dept['status_color'],
+                                  ).withValues(alpha: 0.4),
+                                  blurRadius: 4.r,
+                                  offset: Offset(0, 2.h),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: Center(
+                              child: Text(
+                                dept['status'].toString(),
+                                style: TextStyle(fontWeight: FontWeight.normal),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+
                       tableCell(dept['created_on'].toString()),
                     ],
                   );
@@ -1245,6 +1343,83 @@ class _DashboardPageState extends State<DashboardPage> {
         ],
       ),
     );
+  }
+
+  /////////////////////////////////////////////////////////////
+  /// HEADER
+  /////////////////////////////////////////////////////////////
+  Widget header(String title, IconData icon) {
+    return Row(
+      spacing: 10.w,
+      children: [
+        Container(
+          padding: EdgeInsets.all(6.w),
+          decoration: BoxDecoration(
+            color: primaryColor.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(8.r),
+          ),
+          child: Icon(icon, size: 18.sp, color: primaryColor),
+        ),
+        Expanded(
+          child: TranslatedText(
+            title: title,
+            fontSize: 16.sp,
+            textAlign: TextAlign.start,
+            fontWeight: FontWeight.w700,
+            color: Colors.black87,
+          ),
+        ),
+      ],
+    );
+  }
+
+  List<BarChartGroupData> buildBarGroups() {
+    return List.generate(controller.chartData.length, (index) {
+      final item = controller.chartData[index];
+
+      double pending = item["pending"].toDouble();
+      double inProgress = item["inProgress"].toDouble();
+      double completed = item["completed"].toDouble();
+      double rejected = item["rejected"].toDouble();
+
+      double total = pending + inProgress + completed + rejected;
+
+      return BarChartGroupData(
+        x: index,
+        barRods: [
+          BarChartRodData(
+            toY: total,
+            width: 10,
+
+            rodStackItems: [
+              /// Pending
+              BarChartRodStackItem(0, pending, const Color(0xffe83e8c)),
+
+              /// In Progress
+              BarChartRodStackItem(
+                pending,
+                pending + inProgress,
+                const Color(0xffffc105),
+              ),
+
+              /// Completed
+              BarChartRodStackItem(
+                pending + inProgress,
+                pending + inProgress + completed,
+                const Color(0xff58d8a3),
+              ),
+
+              /// Rejected
+              BarChartRodStackItem(
+                pending + inProgress + completed,
+                total,
+                const Color(0xffFB0404),
+              ),
+            ],
+          ),
+        ],
+      );
+    });
   }
 }
 
