@@ -30,13 +30,15 @@ class KmsController extends GetxController {
   /// Fetches all kms
   Future<void> getKMS() async {
     isLoading.value = true;
+    knowledgeList.clear();
+    articleList.clear();
     final userId = await LocalStorage.getString('user_id') ?? '';
     try {
       final res0 = await _apiService.getKms(userId, "0");
       final res1 = await _apiService.getKms(userId, "1");
 
-      if (res0['common']['status'] == true) knowledgeList.value = res0['data'];
-      if (res1['common']['status'] == true) articleList.value = res1['data'];
+      if (res0['common']['status'] == true) knowledgeList.value = res0['data'] ?? [];
+      if (res1['common']['status'] == true) articleList.value = res1['data'] ?? [];
     } catch (e) {
       showToastNormal('Something went wrong. Please try again later.');
       debugPrint("Login error: $e");
