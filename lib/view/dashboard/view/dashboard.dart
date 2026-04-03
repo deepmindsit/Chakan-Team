@@ -37,11 +37,11 @@ class _DashboardPageState extends State<DashboardPage> {
         return SingleChildScrollView(
           padding: EdgeInsets.all(16.w),
           child: Column(
-            spacing: 16.h,
+            // spacing: 16.h,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _infoGrid(),
-
+              SizedBox(height: 16.h),
               // Obx(() => _pieChartSection()),
               Obx(() => _pieChartComplaint()),
 
@@ -310,6 +310,7 @@ class _DashboardPageState extends State<DashboardPage> {
     if (totalComplaints == 0) return const SizedBox();
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.h),
+      margin: EdgeInsets.only(bottom: 16.h),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
@@ -495,6 +496,7 @@ class _DashboardPageState extends State<DashboardPage> {
     if (totalComplaints == 0) return const SizedBox();
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.h),
+      margin: EdgeInsets.only(bottom: 16.h),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
@@ -681,6 +683,7 @@ class _DashboardPageState extends State<DashboardPage> {
     if (totalComplaints == 0) return const SizedBox();
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.h),
+      margin: EdgeInsets.only(bottom: 16.h),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
@@ -998,6 +1001,7 @@ class _DashboardPageState extends State<DashboardPage> {
           child: TranslatedText(
             title: "$label ($count)",
             fontSize: 12.sp,
+            maxLines: 2,
             textAlign: TextAlign.start,
             fontWeight: FontWeight.w500,
             color: Colors.black87,
@@ -1012,6 +1016,7 @@ class _DashboardPageState extends State<DashboardPage> {
           child: CustomText(
             title: "${percent.toStringAsFixed(0)}%",
             fontSize: 12.sp,
+
             color: color,
             fontWeight: FontWeight.w600,
           ),
@@ -1037,6 +1042,7 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget dashboardCard({required Widget child}) {
     return Container(
       padding: EdgeInsets.all(14.w),
+      margin: EdgeInsets.only(bottom: 16.h),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14.r),

@@ -318,9 +318,9 @@ Color getColor(String key) {
       return Colors.blue;
     case 'Android':
       return Colors.green;
-    case 'Chat Bot':
+    case 'WhatsApp Chatbot':
       return Colors.teal;
-    case 'Inward':
+    case 'InWard':
       return Colors.orange;
     case 'Toll Free':
       return Colors.purple;
@@ -412,6 +412,7 @@ Future<void> openMap(String latlng) async {
     throw 'Could not launch $url';
   }
 }
+
 Widget legend(String text, Color color) {
   return Row(
     spacing: 5,
@@ -421,8 +422,6 @@ Widget legend(String text, Color color) {
     ],
   );
 }
-
-
 
 Color hexToColor(String hex) {
   final buffer = StringBuffer();
