@@ -62,7 +62,9 @@ class UpdateController extends GetxController {
         currentVersion.value,
       );
       if (isNewVersion) {
-        updateDataIOS['show_popup'] == true ? _showUpdateDialog() : null;
+        updateDataIOS['show_popup'] == true
+            ? _showUpdateDialog(updateDataIOS)
+            : null;
       }
     } else {
       currentVersion.value = info.version;
@@ -72,7 +74,7 @@ class UpdateController extends GetxController {
       int systemVersion = _versionToInt(currentVersion.value);
 
       if (apiVersion > systemVersion && updateData['show_popup'] == true) {
-        _showUpdateDialog();
+        _showUpdateDialog(updateData);
       }
     }
   }
@@ -105,7 +107,7 @@ class UpdateController extends GetxController {
   }
 
   /// Show Update Dialog
-  void _showUpdateDialog() {
+  void _showUpdateDialog(dynamic data) {
     if (GetPlatform.isIOS) {
       // iOS Style Dialog
       Get.dialog(
@@ -118,20 +120,20 @@ class UpdateController extends GetxController {
             ),
           ),
           actions: [
-            if (updateData['force_update'] == true)
+            if (data['force_update'] == true)
               CupertinoDialogAction(
                 isDestructiveAction: true,
                 onPressed: () => SystemNavigator.pop(),
                 child: const Text('Exit App'),
               ),
-            if (updateData['force_update'] == false)
+            if (data['force_update'] == false)
               CupertinoDialogAction(
                 onPressed: () => Get.back(),
                 child: const Text('Skip'),
               ),
             CupertinoDialogAction(
               isDefaultAction: true,
-              onPressed: () => launchURL(updateData['url']),
+              onPressed: () => launchURL(data['url']),
               child: const Text('Update'),
             ),
           ],
@@ -151,7 +153,7 @@ class UpdateController extends GetxController {
               'A new version of the app is available. Please update to continue.',
             ),
             actions: [
-              if (updateData['force_update'] == true)
+              if (data['force_update'] == true)
                 TextButton(
                   onPressed: () => SystemNavigator.pop(),
                   child: const Text(
@@ -159,7 +161,7 @@ class UpdateController extends GetxController {
                     style: TextStyle(color: Colors.red),
                   ),
                 ),
-              if (updateData['force_update'] == false)
+              if (data['force_update'] == false)
                 TextButton(
                   onPressed: () => Get.back(),
                   child: const Text(
@@ -168,7 +170,7 @@ class UpdateController extends GetxController {
                   ),
                 ),
               TextButton(
-                onPressed: () => launchURL(updateData['url']),
+                onPressed: () => launchURL(data['url']),
                 child: Text('Update', style: TextStyle(color: primaryColor)),
               ),
             ],
