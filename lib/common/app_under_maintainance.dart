@@ -15,7 +15,7 @@ class Maintenance extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
-              'assets/images/maintenance.png',
+              'assets/images/app_maintenance.png',
               width: Get.width * 0.6,
             ),
             Text(
