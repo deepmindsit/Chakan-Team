@@ -120,12 +120,12 @@ class UpdateController extends GetxController {
             ),
           ),
           actions: [
-            if (data['force_update'] == true)
-              CupertinoDialogAction(
-                isDestructiveAction: true,
-                onPressed: () => SystemNavigator.pop(),
-                child: const Text('Exit App'),
-              ),
+            // if (data['force_update'] == true)
+            //   CupertinoDialogAction(
+            //     isDestructiveAction: true,
+            //     onPressed: () => SystemNavigator.pop(),
+            //     child: const Text('Exit App'),
+            //   ),
             if (data['force_update'] == false)
               CupertinoDialogAction(
                 onPressed: () => Get.back(),
